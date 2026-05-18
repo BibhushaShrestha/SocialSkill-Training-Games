@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Login</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: #eaf4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    text-align: center;
+}
+
+.logo {
+    font-size: 60px;
+    background: #f7e7a9;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+h1 {
+    color: #555;
+}
+
+.subtitle {
+    color: #777;
+    margin-bottom: 20px;
+}
+
+.card {
+    background: white;
+    padding: 35px;
+    border-radius: 20px;
+    width: 320px;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 10px;
+    border: 2px solid #eee;
+    font-size: 14px;
+    outline: none;
+}
+
+input:focus {
+    border-color: #f5d77c;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    background: #f5d77c;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #f3cc55;
+    transform: scale(1.05);
+}
+
+.link {
+    font-size: 13px;
+    color: #555;
+    cursor: pointer;
+    display: block;
+    margin-top: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="logo">🙂</div>
+
+<h1>Social Skills Game 🎮</h1>
+<p class="subtitle">Learn • Play • Grow Together</p>
+
+<div class="card">
+
+<input type="text" id="username" placeholder="Enter Username">
+<input type="password" id="password" placeholder="Enter Password">
+
+<!-- Login -->
+<button onclick="loginUser()">⭐ Start Learning</button>
+
+<!-- Forgot Password -->
+<span class="link" onclick="forgotPassword()">Forgot Password?</span>
+
+<!-- Create Account -->
+<span class="link" onclick="createAccount()">Don't have an account? Create one!</span>
+
+</div>
+
+</div>
+
+<script>
+// go to dashboard
+function goDashboard(){
+    window.location.href = "dashboard.html";
+}
+
+// go to create account page
+function createAccount(){
+    window.location.href = "create_account.html";
+}
+
+// go to forgot password page
+function forgotPassword(){
+    window.location.href = "forgot_password.html";
+}
+
+// Redirect to dashboard if already logged in
+if (localStorage.getItem('token')) {
+  window.location.href = "dashboard.html";
+}
+</script>
+<script>
+const loginUser = async () => {
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+
+  try {
+    const res = await fetch('http://localhost:5000/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username,
+        password,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      window.location.href = "dashboard.html";
+    } else {
+      alert(data.message || "Login failed");
+    }
+
+  } catch (error) {
+    console.error("Login error:", error);
+    alert("Server error");
+  }
+};
+</script>
+</body>
+</html>

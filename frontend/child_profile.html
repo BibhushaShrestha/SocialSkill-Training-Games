@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Child Profile</title>
+
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Fredoka', sans-serif;
+      background-color: #eaf4f4;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .left-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .back-btn {
+      background: #ffffff;
+      border: none;
+      padding: 8px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .edit-btn {
+      background: #ffe082;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 20px;
+      margin-top: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .profile-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .avatar {
+      width: 70px;
+      height: 70px;
+      background: #ffd54f;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 30px;
+    }
+
+    .stats {
+      display: flex;
+      gap: 20px;
+      font-size: 14px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title i {
+      width: 20px;
+      height: 20px;
+    }
+
+    .progress-bar {
+      background: #eee;
+      border-radius: 10px;
+      height: 10px;
+      margin: 5px 0 15px;
+    }
+
+    .progress {
+      height: 10px;
+      border-radius: 10px;
+    }
+
+    .badges {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      width: 100px;
+      height: 100px;
+      background: #fff8dc;
+      border-radius: 15px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .badge.locked {
+      opacity: 0.4;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <!-- Header -->
+    <div class="header">
+      <div class="left-header">
+        <button class="back-btn" onclick="history.back()">
+          <i data-lucide="arrow-left"></i>
+        </button>
+        <h2>My Profile</h2>
+      </div>
+      <button class="edit-btn">Edit</button>
+    </div>
+
+    <!-- Profile -->
+    <div class="card profile">
+      <div class="profile-left">
+        <div class="avatar">👦</div>
+        <div>
+          <h3 id="profileName">Sam</h3>
+          <div class="stats">
+            <span id="profileStars">⭐ 0 Stars</span>
+            <span id="profileModules">🎓 0/5 Modules</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Module Progress -->
+    <div class="card">
+      <div class="section-title">
+        <i data-lucide="bar-chart-3"></i>
+        <h3>Module Progress</h3>
+      </div>
+
+      <p>Greeting Skills (<span id="modGreeting">0</span>%)</p>
+      <div class="progress-bar">
+        <div id="barGreeting" class="progress" style="width:0%; background:#ffe082;"></div>
+      </div>
+
+      <p>Sharing & Kindness (<span id="modSharing">0</span>%)</p>
+      <div class="progress-bar">
+        <div id="barSharing" class="progress" style="width:0%; background:#ffccbc;"></div>
+      </div>
+
+      <p>Waiting & Turn-Taking (<span id="modWaiting">0</span>%)</p>
+      <div class="progress-bar">
+        <div id="barWaiting" class="progress" style="width:0%; background:#d1c4e9;"></div>
+      </div>
+
+      <p>Emotion Recognition (<span id="modEmotion">0</span>%)</p>
+      <div class="progress-bar">
+        <div id="barEmotion" class="progress" style="width:0%; background:#b2dfdb;"></div>
+      </div>
+
+      <p>Communication & Politeness (<span id="modCommunication">0</span>%)</p>
+      <div class="progress-bar">
+        <div id="barCommunication" class="progress" style="width:0%; background:#c8e6c9;"></div>
+      </div>
+    </div>
+
+    <!-- Badges -->
+    <div class="card">
+      <div class="section-title">
+        <i data-lucide="award"></i>
+        <h3>Badges</h3>
+      </div>
+
+      <div id="badgesContainer" class="badges">
+        <div class="badge">🎯<br>First Steps</div>
+        <div class="badge">⭐<br>Star Collector</div>
+        <div class="badge">🚀<br>Super Learner</div>
+        <div class="badge locked">💯<br>Perfect Score</div>
+        <div class="badge locked">🏆<br>Champion</div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const API = 'http://localhost:5000/api';
+
+    function getToken() {
+      return localStorage.getItem('token');
+    }
+
+    async function loadProfile() {
+      const token = getToken();
+      if (!token) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API}/games/dashboard/me`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+
+        if (!data.success) {
+          alert('Session expired. Please login again.');
+          window.location.href = 'login.html';
+          return;
+        }
+
+        const d = data.dashboard;
+        localStorage.setItem('childProfileId', d.id);
+        document.getElementById('profileName').innerText = d.childName;
+        document.getElementById('profileStars').innerHTML = `⭐ ${d.stars} Stars`;
+
+        const completedModules = d.moduleProgress.filter(m => {
+          const avg = (m.easy + m.medium + m.hard) / 3;
+          return avg > 0;
+        }).length;
+        document.getElementById('profileModules').innerHTML = `🎓 ${completedModules}/5 Modules`;
+
+        const moduleMap = {
+          greeting: 'modGreeting',
+          sharing: 'modSharing',
+          waiting: 'modWaiting',
+          emotion: 'modEmotion',
+          communication: 'modCommunication'
+        };
+        const barMap = {
+          greeting: 'barGreeting',
+          sharing: 'barSharing',
+          waiting: 'barWaiting',
+          emotion: 'barEmotion',
+          communication: 'barCommunication'
+        };
+        const colors = {
+          greeting: '#ffe082',
+          sharing: '#ffccbc',
+          waiting: '#d1c4e9',
+          emotion: '#b2dfdb',
+          communication: '#c8e6c9'
+        };
+
+        d.moduleProgress.forEach(m => {
+          const avg = Math.round((m.easy + m.medium + m.hard) / 3);
+          const el = document.getElementById(moduleMap[m.module]);
+          const bar = document.getElementById(barMap[m.module]);
+          if (el) el.innerText = avg;
+          if (bar) {
+            bar.style.width = avg + '%';
+            bar.style.background = colors[m.module] || '#ffe082';
+          }
+        });
+
+        if (d.badges && d.badges.length > 0) {
+          const container = document.getElementById('badgesContainer');
+          container.innerHTML = d.badges.map(b =>
+            `<div class="badge">${b.icon}<br>${b.name}</div>`
+          ).join('');
+        }
+      } catch (error) {
+        console.error('Profile load error:', error);
+      }
+    }
+
+    loadProfile();
+    lucide.createIcons();
+  </script>
+</body>
+</html>

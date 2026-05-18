@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Create Account</title>
+
+<style>
+
+body{
+font-family:'Poppins',sans-serif;
+background:#eaf4f4;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+margin:0;
+}
+
+.container{
+text-align:center;
+}
+
+.logo{
+font-size:60px;
+background:#f7e7a9;
+width:90px;
+height:90px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+margin:auto;
+box-shadow:0 8px 20px rgba(0,0,0,0.1);
+animation:float 3s ease-in-out infinite;
+}
+
+@keyframes float{
+0%{transform:translateY(0)}
+50%{transform:translateY(-10px)}
+100%{transform:translateY(0)}
+}
+
+h1{
+color:#555;
+}
+
+.subtitle{
+color:#777;
+margin-bottom:20px;
+}
+
+.card{
+background:white;
+padding:35px;
+border-radius:20px;
+width:320px;
+box-shadow:0 15px 30px rgba(0,0,0,0.1);
+}
+
+input{
+width:100%;
+padding:12px;
+margin:10px 0;
+border-radius:10px;
+border:2px solid #eee;
+font-size:14px;
+outline:none;
+}
+
+input:focus{
+border-color:#f5d77c;
+}
+
+button{
+width:100%;
+padding:12px;
+border:none;
+border-radius:12px;
+background:#f5d77c;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+margin-top:10px;
+transition:0.3s;
+}
+
+button:hover{
+background:#f3cc55;
+transform:scale(1.05);
+}
+
+.back{
+margin-top:15px;
+font-size:14px;
+}
+
+.back a{
+text-decoration:none;
+color:#555;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="logo">🙂</div>
+
+<h1>Create Account</h1>
+<p class="subtitle">Join the fun!</p>
+
+<div class="card">
+
+<input type="text" placeholder="Child's Name">
+
+<input type="text" placeholder="Choose Username">
+
+<input type="email" placeholder="Email (for password reset)">
+
+<input type="password" placeholder="Create Password">
+
+<button onclick="register()">🎉 Create Account</button>
+
+<div class="back">
+<a href="login.html">⬅ Back to Login</a>
+</div>
+
+</div>
+
+</div>
+<script>
+async function register() {
+
+    const childName = document.querySelectorAll("input")[0].value;
+    const username = document.querySelectorAll("input")[1].value;
+    const email = document.querySelectorAll("input")[2].value;
+    const password = document.querySelectorAll("input")[3].value;
+
+    if (!childName || !username || !password) {
+        alert("Please fill all fields");
+        return;
+    }
+
+    try {
+
+        const res = await fetch(
+            'http://localhost:5000/api/auth/register',
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    childName,
+                    username,
+                    email,
+                    password
+                })
+            }
+        );
+
+        const data = await res.json();
+
+        console.log(data);
+
+        if (data.success) {
+            alert("Account created successfully!");
+            window.location.href = "login.html";
+        } else {
+            alert(data.message);
+        }
+
+    } catch (error) {
+
+        console.log(error);
+
+        alert("Error creating account");
+    }
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Quiz</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Fredoka', sans-serif;
+  background: #eaf4f4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+
+
+/* MAIN CONTAINER */
+.container {
+  width: 90%;
+  max-width: 650px;
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  text-align: center;
+  border: 1px solid #eaf4f4;
+}
+
+/* QUESTION BOX */
+h2 {
+  color: #2c3e50;
+  background: #ffffff;
+  padding: 18px;
+  border-radius: 16px;
+  border: 2px solid #eaf4f4;
+  margin-bottom: 15px;
+}
+
+/* OPTIONS */
+.option {
+  display: block;
+  background: #ffffff;
+  padding: 14px;
+  margin: 10px 0;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: 0.2s;
+  border: 2px solid #f0f7f7;
+}
+
+.option:hover {
+  background: #f5fbfb;
+  transform: scale(1.01);
+}
+
+.selected {
+  background: #eaf4f4;
+  border: 2px solid #b2dfdb;
+}
+
+/* BUTTONS */
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 12px;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+/* Submit */
+#submitBtn {
+  background: #c8e6c9;
+  color: #2e4a3d;
+}
+
+/* Result screen */
+#resultScreen {
+  display: none;
+}
+
+/* CORRECT */
+.correctBox {
+  background: #dff5e1;
+  border: 2px solid #a9dfbf;
+  padding: 25px;
+  border-radius: 18px;
+  animation: pop 0.3s ease, bounce 0.5s ease;
+}
+
+/* WRONG */
+.wrongBox {
+  background: #fdecea;
+  border: 2px solid #f5b7b1;
+  padding: 25px;
+  border-radius: 18px;
+  animation: pop 0.3s ease, shake 0.4s ease;
+}
+
+/* animations */
+@keyframes pop {
+  from { transform: scale(0.85); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes bounce {
+  0% { transform: scale(0.95); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-4px); }
+  100% { transform: translateX(0); }
+}
+</style>
+</head>
+
+<body>
+
+    <div style="position:absolute; top:20px; left:20px;">
+  <button onclick="goBack()" style="
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    border: none;
+    background: white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    cursor: pointer;
+    font-size: 18px;
+  ">
+    ←
+  </button>
+</div>
+
+<div class="container">
+
+  <!-- QUIZ -->
+  <div id="quizScreen">
+    <h2 id="question">Loading...</h2>
+    <div id="options"></div>
+
+    <button id="submitBtn" onclick="submitAnswer()">SUBMIT</button>
+  </div>
+
+  <!-- RESULT -->
+  <div id="resultScreen">
+    <div id="resultBox"></div>
+  </div>
+
+</div>
+
+<script src="questions.js"></script>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const module = params.get("module");
+const level = params.get("level");
+
+const questions = questionBank[module][level];
+
+let index = 0;
+let selected = null;
+let score = 0;
+
+function loadQuestion() {
+  selected = null;
+
+  document.getElementById("quizScreen").style.display = "block";
+  document.getElementById("resultScreen").style.display = "none";
+
+  const q = questions[index];
+
+  document.getElementById("question").innerText =
+    `Q${index + 1}. ${q.q}`;
+
+  const optionsDiv = document.getElementById("options");
+  optionsDiv.innerHTML = "";
+
+  q.options.forEach((opt, i) => {
+    const div = document.createElement("div");
+    div.classList.add("option");
+    div.innerText = opt;
+
+    div.onclick = () => {
+      document.querySelectorAll(".option").forEach(o => o.classList.remove("selected"));
+      div.classList.add("selected");
+      selected = i;
+    };
+
+    optionsDiv.appendChild(div);
+  });
+}
+
+function submitAnswer() {
+  if (selected === null) {
+    alert("Please select an answer!");
+    return;
+  }
+
+  const correct = questions[index].correct;
+  const correctText = questions[index].options[correct];
+
+  document.getElementById("quizScreen").style.display = "none";
+  document.getElementById("resultScreen").style.display = "block";
+
+  let html = "";
+
+  if (selected === correct) {
+    score++;
+
+    html = `
+      <div class="correctBox">
+        <h2>🎉 Great Job!</h2>
+        <p>You got it right!</p>
+        <p>⭐ You earned a star!</p>
+
+        <button onclick="nextQuestion()" 
+          style="margin-top:15px; width:100%; padding:12px;
+          border:none; border-radius:14px;
+          background:#a9dfbf; cursor:pointer;">
+          NEXT QUESTION ➜
+        </button>
+      </div>
+    `;
+  } else {
+    html = `
+      <div class="wrongBox">
+        <h2>❌ Oops!</h2>
+        <p>Correct answer is:</p>
+        <h3>${correctText}</h3>
+
+        <p>💡 Try again!</p>
+
+        <button onclick="retryQuestion()" 
+          style="margin-top:15px; width:100%; padding:12px;
+          border:none; border-radius:14px;
+          background:#f5b7b1; cursor:pointer;">
+          TRY AGAIN 🔁
+        </button>
+      </div>
+    `;
+  }
+
+  document.getElementById("resultBox").innerHTML = html;
+}
+
+function retryQuestion() {
+  document.getElementById("resultScreen").style.display = "none";
+  document.getElementById("quizScreen").style.display = "block";
+}
+
+async function getChildProfileId() {
+  let id = localStorage.getItem('childProfileId');
+  if (id) return id;
+
+  const token = localStorage.getItem('token');
+  if (!token) return null;
+
+  try {
+    const res = await fetch('http://localhost:5000/api/games/dashboard/me', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const data = await res.json();
+    if (data.success) {
+      localStorage.setItem('childProfileId', data.dashboard.id);
+      return data.dashboard.id;
+    }
+  } catch (err) {
+    console.error('Failed to fetch profile:', err);
+  }
+  return null;
+}
+
+async function saveQuizResult() {
+  const childId = await getChildProfileId();
+  const token = localStorage.getItem('token');
+  if (!childId || !token) return;
+
+  try {
+    await fetch('http://localhost:5000/api/games', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        child: childId,
+        module,
+        level,
+        score,
+        total: questions.length,
+        completed: true,
+      }),
+    });
+  } catch (err) {
+    console.error('Failed to save quiz result:', err);
+  }
+}
+
+function nextQuestion() {
+  index++;
+
+  if (index < questions.length) {
+    loadQuestion();
+  } else {
+    saveQuizResult();
+
+    document.getElementById("resultBox").innerHTML = `
+      <div class="correctBox">
+        <h2>🎉 Quiz Finished!</h2>
+        <p>Your Score: ${score} / ${questions.length}</p>
+        <p>Great job! 🌟</p>
+      </div>
+    `;
+
+    document.getElementById("quizScreen").style.display = "none";
+    document.getElementById("resultScreen").style.display = "block";
+  }
+}
+
+loadQuestion();
+
+function goBack(){
+  window.location.href = `level.html?module=${module}`;
+}
+</script>
+
+</body>
+</html>

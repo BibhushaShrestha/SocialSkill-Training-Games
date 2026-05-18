@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Choose a Module</title>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Comic Sans MS', sans-serif;
+      background-color: #eaf4f4;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .back-btn {
+      margin-right: 10px;
+      cursor: pointer;
+      width: 35px;
+      height: 35px;
+      border-radius: 10px;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      margin: 0;
+      color: #2c3e50;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #6c7a89;
+      margin-bottom: 20px;
+    }
+
+    .module {
+      display: flex;
+      align-items: center;
+      background: white;
+      padding: 15px;
+      border-radius: 15px;
+      margin-bottom: 15px;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: 0.2s;
+    }
+
+    .module:hover {
+      transform: scale(1.02);
+    }
+
+    .icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 15px;
+    }
+
+    .icon svg {
+      width: 24px;
+      height: 24px;
+      stroke-width: 2;
+    }
+
+    .text h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .text p {
+      margin: 5px 0 0;
+      font-size: 13px;
+      color: #777;
+    }
+
+    /* Pastel colors */
+    .yellow { background: #f9e79f; }
+    .peach { background: #f5cba7; }
+    .purple { background: #d7bde2; }
+    .green { background: #a9dfbf; }
+    .pink { background: #f5b7b1; }
+
+    /* Quote box */
+    .quote-box {
+      margin-top: 20px;
+      background: white;
+      padding: 15px;
+      border-radius: 15px;
+      text-align: center;
+      font-size: 14px;
+      color: #555;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <div class="back-btn" onclick="history.back()">
+      <i data-lucide="arrow-left"></i>
+    </div>
+    <div>
+      <h2>Choose a Module</h2>
+      <div class="subtitle">Pick what you want to learn!</div>
+    </div>
+  </div>
+
+  <!-- Modules -->
+  <a href="level.html?module=greeting" class="module">
+    <div class="icon yellow">
+      <i data-lucide="hand"></i>
+    </div>
+    <div class="text">
+      <h3>Greeting Skills</h3>
+      <p>Learn to say hello and goodbye</p>
+    </div>
+  </a>
+
+  <a href="level.html?module=sharing" class="module">
+    <div class="icon peach">
+      <i data-lucide="heart"></i>
+    </div>
+    <div class="text">
+      <h3>Sharing & Kindness</h3>
+      <p>Learn to share and be kind</p>
+    </div>
+  </a>
+
+  <a href="level.html?module=waiting" class="module">
+    <div class="icon purple">
+      <i data-lucide="clock"></i>
+    </div>
+    <div class="text">
+      <h3>Waiting & Turn-Taking</h3>
+      <p>Learn to wait patiently</p>
+    </div>
+  </a>
+
+  <a href="level.html?module=emotion" class="module">
+    <div class="icon green">
+      <i data-lucide="smile"></i>
+    </div>
+    <div class="text">
+      <h3>Emotion Recognition</h3>
+      <p>Learn to understand feelings</p>
+    </div>
+  </a>
+
+ <a href="level.html?module=communication" class="module">
+    <div class="icon pink">
+      <i data-lucide="message-circle"></i>
+    </div>
+    <div class="text">
+      <h3>Communication & Politeness</h3>
+      <p>Learn polite communication</p>
+    </div>
+  </a>
+
+  <!-- Quote Box -->
+  <div class="quote-box" id="quoteBox">
+    🌟 Loading quote...
+  </div>
+
+</div>
+
+<script>
+  // Activate Lucide icons
+  lucide.createIcons();
+
+  // Quotes
+  const quotes = [
+    "🌟 Small steps every day lead to big success!",
+    "😊 Being kind makes the world brighter!",
+    "👏 Great job trying your best!",
+    "💡 Learning new things is fun!",
+    "🌈 You are doing amazing, keep going!"
+  ];
+
+  const randomIndex = Math.floor(Math.random() * quotes.length);
+  document.getElementById("quoteBox").innerText = quotes[randomIndex];
+</script>
+
+</body>
+</html>

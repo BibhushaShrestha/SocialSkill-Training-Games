@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Choose Level</title>
+
+<style>
+body {
+  font-family: 'Comic Sans MS', sans-serif;
+  background: #eaf4f4;
+  display:flex;
+  justify-content: center;
+  text-align: center;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.container {
+  width: 100%;
+  max-width: 600px;
+  text-align: center;
+}
+
+.level {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  padding: 18px;
+  border-radius: 18px;
+  margin-bottom: 18px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: 0.3s;
+  position: relative;
+}
+
+.level:hover:not(.locked) {
+  transform: scale(1.05);
+}
+
+.level.locked {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.icon {
+  font-size: 40px;
+  margin-right: 15px;
+}
+
+.easy { background:#a9dfbf; }
+.medium { background:#f9e79f; }
+.hard { background:#f5cba7; }
+
+.lock-icon {
+  position: absolute;
+  right: 20px;
+  font-size: 24px;
+}
+
+h2 {
+  margin-bottom: 25px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 25px; position: relative;">
+
+  <button onclick="goBack()" style="
+      position: absolute;
+      left: 0;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: none;
+      background: white;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      cursor: pointer;
+      font-size: 18px;
+  ">
+    ←
+  </button>
+
+  <h2 style="margin: 0;">Choose Level 🎯</h2>
+
+</div>
+
+<div id="easyLevel" class="level" onclick="go('easy')">
+  <div class="icon easy">😊</div>
+  <h3>Easy</h3>
+</div>
+
+<div id="mediumLevel" class="level locked" onclick="go('medium')">
+  <div class="icon medium">🙂</div>
+  <h3>Medium</h3>
+  <span class="lock-icon">🔒</span>
+</div>
+
+<div id="hardLevel" class="level locked" onclick="go('hard')">
+  <div class="icon hard">😎</div>
+  <h3>Hard</h3>
+  <span class="lock-icon">🔒</span>
+</div>
+
+</div>
+
+<script>
+  const API = 'http://localhost:5000/api';
+  const params = new URLSearchParams(window.location.search);
+  const module = params.get("module");
+
+  function go(level) {
+    if (!module) {
+      alert("Module not selected!");
+      return;
+    }
+    const el = document.getElementById(level + 'Level');
+    if (el.classList.contains('locked')) {
+      alert('Complete the previous level first!');
+      return;
+    }
+    window.location.href = `quiz.html?module=${module}&level=${level}`;
+  }
+
+  function goBack() {
+    window.location.href = "module_selection.html";
+  }
+
+  async function loadLevels() {
+    const token = localStorage.getItem('token');
+    if (!token || !module) return;
+
+    try {
+      const res = await fetch(`${API}/games/module/${module}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (!data.success) return;
+
+      const completed = data.completed || {};
+
+      if (completed.easy) {
+        document.getElementById('mediumLevel').classList.remove('locked');
+        document.getElementById('mediumLevel').querySelector('.lock-icon')?.remove();
+      }
+      if (completed.medium) {
+        document.getElementById('hardLevel').classList.remove('locked');
+        document.getElementById('hardLevel').querySelector('.lock-icon')?.remove();
+      }
+    } catch (err) {
+      console.error('Failed to load level progress:', err);
+    }
+  }
+
+  loadLevels();
+</script>
+
+</body>
+</html>

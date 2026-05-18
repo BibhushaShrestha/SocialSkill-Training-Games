@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Dashboard – 75% Width Centered</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: #eaf4f4;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .content-wrapper {
+            width: 100%;
+            max-width: 75%;
+            margin: 0 auto;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.08),
+                        0 5px 10px -5px rgba(0,0,0,0.05);
+        }
+        
+        .stars-badge {
+            background: linear-gradient(135deg, #fef08a 0%, #fde047 100%);
+            color: #713f12;
+            padding: 0.85rem 1.8rem;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 1.35rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            box-shadow: 0 6px 16px -4px rgba(0,0,0,0.12);
+            border: 2px solid #facc15;
+        }
+        
+        .progress-bar-fill {
+            transition: width 1.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .start-btn {
+            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            background: #8af0c7;;
+        }
+        
+        .start-btn:hover {
+            transform: scale(1.06);
+            background: #8af0c7;
+            box-shadow: 0 20px 30px -10px rgba(0,0,0,0.12);
+        }
+        
+        .icon-btn {
+            transition: all 0.2s ease;
+        }
+        
+        .icon-btn:hover {
+            transform: scale(1.12);
+            background: #f1f5f9;
+        }
+
+        @media (max-width: 1024px) {
+            .content-wrapper { max-width: 85%; }
+        }
+
+        @media (max-width: 640px) {
+            .content-wrapper { max-width: 100%; }
+            body { padding: 1.25rem 0.75rem; }
+            h1 { font-size: 1.8rem; }
+            .stars-badge { font-size: 1.2rem; padding: 0.7rem 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-10 gap-6 px-4 md:px-0">
+            <div class="flex items-center gap-5">
+                <div class="w-14 h-14 bg-yellow-300 rounded-2xl flex items-center justify-center text-3xl shadow-inner">
+                    👤
+                </div>
+                <div>
+                    <div class="flex items-center gap-3">
+                        <h1 id="greeting" class="text-3xl md:text-4xl font-semibold text-slate-800">Hello!</h1>
+                        <span class="text-4xl md:text-5xl">👋</span>
+                    </div>
+                    <p class="text-slate-500 text-lg md:text-xl mt-1">Ready to learn today?</p>
+                </div>
+            </div>
+
+            <div class="flex gap-4">
+                <!-- 👤 Profile Button -->
+                <button onclick="goProfile()" class="icon-btn w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm">
+                    <i class="fa-solid fa-user text-slate-600 text-xl"></i>
+                </button>
+
+                <button onclick="goLogin()" class="icon-btn w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm">
+                    <i class="fa-solid fa-arrow-right-from-bracket text-slate-600 text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content-wrapper">
+
+            <!-- Progress Card -->
+            <div class="card p-10 pb-12 mb-10 relative">
+                <div class="flex justify-center mb-9 -mt-5">
+                    <div class="stars-badge">
+                        <span>⭐</span> <span id="starsCount">0</span> Stars
+                    </div>
+                </div>
+
+                <div class="mt-2">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-baseline mb-5 gap-4">
+                        <span class="text-slate-600 font-medium text-xl">Overall Progress</span>
+                        <span id="progressPct" class="text-emerald-600 font-bold text-4xl">0%</span>
+                    </div>
+                    
+                    <div class="h-5 bg-gray-100 rounded-full overflow-hidden shadow-inner">
+                        <div id="progressBar" class="progress-bar-fill h-full bg-gradient-to-r from-emerald-400 via-emerald-500 to-teal-500 rounded-full"
+                             style="width: 0%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Start Button -->
+            <button onclick="startLearning()"
+                    class="start-btn w-full text-slate-800 font-bold text-2xl py-7 rounded-3xl flex items-center justify-center gap-4 shadow-lg active:scale-95">
+                <i class="fa-solid fa-play text-3xl"></i>
+                Start Learning
+            </button>
+
+            <!-- Motivation -->
+            <div class="card p-8 mt-10 text-center">
+                <div class="flex justify-center items-center gap-6 text-4xl mb-3">
+                    <span>💪</span>
+                    <p class="text-slate-700 text-xl font-medium leading-relaxed">
+                        Every day you're getting better!<br>Keep it up!
+                    </p>
+                    <span>💪</span>
+                </div>
+            </div>
+
+            <!-- Help -->
+            <div class="flex justify-end mt-8">
+                <button class="w-10 h-10 bg-white rounded-2xl flex items-center justify-center shadow-sm text-slate-500 hover:text-slate-700 text-xl font-medium transition-colors">
+                    ?
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+    const API = 'http://localhost:5000/api';
+
+    function getToken() {
+      return localStorage.getItem('token');
+    }
+
+    function goLogin() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('childProfileId');
+      window.location.href = "login.html";
+    }
+
+    function startLearning() {
+      document.body.style.transition = "opacity 0.3s ease";
+      document.body.style.opacity = "0";
+      setTimeout(() => {
+        window.location.href = "./moduleSelection/module_selection.html";
+      }, 300);
+    }
+
+    function goProfile() {
+      window.location.href = "child_profile.html";
+    }
+
+    async function loadDashboard() {
+      const token = getToken();
+      if (!token) {
+        goLogin();
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API}/games/dashboard/me`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+
+        if (!data.success) {
+          alert('Session expired. Please login again.');
+          goLogin();
+          return;
+        }
+
+        const d = data.dashboard;
+        localStorage.setItem('childProfileId', d.id);
+        document.getElementById('greeting').innerText = `Hello, ${d.childName}!`;
+        document.getElementById('starsCount').innerText = d.stars;
+        document.getElementById('progressPct').innerText = `${d.overallProgress}%`;
+
+        const bar = document.getElementById('progressBar');
+        bar.style.width = '0%';
+        setTimeout(() => { bar.style.width = `${d.overallProgress}%`; }, 400);
+      } catch (error) {
+        console.error('Dashboard load error:', error);
+        alert('Could not load dashboard. Make sure the server is running.');
+      }
+    }
+
+    window.addEventListener('load', loadDashboard);
+</script>
+
+</body>
+</html>
