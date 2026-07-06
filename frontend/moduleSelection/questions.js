@@ -3,26 +3,31 @@ const questionBank = {
   greeting: {
     easy: [
       {
+        image: "https://img.magnific.com/premium-photo/preschool-teacher-welcoming-students-walking-downstairs-entering-classroom-morning_751835-3251.jpg",
         q: "You see your teacher in the morning. What do you say?",
         options: ["Good Morning!", "Ignore", "Shout"],
         correct: 0
       },
       {
+        image: "https://img.freepik.com/premium-vector/children-meeting-friend-park-scene_1308-51479.jpg",
         q: "You meet your friend. What do you say?",
         options: ["Hello!", "Push", "Run away"],
         correct: 0
       },
       {
+        image: "https://images.pexels.com/photos/2675061/pexels-photo-2675061.jpeg?auto=compress&cs=tinysrgb&w=400",
         q: "When leaving school, what should you say?",
         options: ["Goodbye", "Stay silent", "Cry"],
         correct: 0
       },
       {
+        image: "https://images.pexels.com/photos/8617758/pexels-photo-8617758.jpeg?auto=compress&cs=tinysrgb&w=400",
         q: "Someone greets you. What do you do?",
         options: ["Reply politely", "Ignore", "Turn away"],
         correct: 0
       },
       {
+        image: "https://images.pexels.com/photos/8423069/pexels-photo-8423069.jpeg?auto=compress&cs=tinysrgb&w=400",
         q: "In the morning at school you say?",
         options: ["Good Morning", "Good Night", "Bye"],
         correct: 0
@@ -89,26 +94,31 @@ const questionBank = {
   sharing: {
     easy: [
       {
+        image: "https://images.pexels.com/photos/6966339/pexels-photo-6966339.jpeg?auto=compress&cs=tinysrgb&w=400",
         q: "Friend wants your toy?",
         options: ["Share it", "Hide it", "Refuse rudely"],
         correct: 0
       },
       {
+        image: "https://thumbs.dreamstime.com/b/little-girl-giving-pencil-to-boy-classroom-cute-sitting-desk-36904832.jpg",
         q: "Someone has no pencil?",
         options: ["Share yours", "Keep silent", "Laugh"],
         correct: 0
       },
       {
+        image: "https://images.pexels.com/photos/5278985/pexels-photo-5278985.jpeg?auto=compress&cs=tinysrgb&w=400",
         q: "Sharing makes friends feel?",
         options: ["Happy", "Angry", "Sad"],
         correct: 0
       },
       {
+        image: "https://images.pexels.com/photos/8422173/pexels-photo-8422173.jpeg?auto=compress&cs=tinysrgb&w=400",
         q: "You should share with?",
         options: ["Friends", "No one", "Enemies"],
         correct: 0
       },
       {
+        image: "https://images.pexels.com/photos/8613146/pexels-photo-8613146.jpeg?auto=compress&cs=tinysrgb&w=400",
         q: "Sharing is a?",
         options: ["Good habit", "Bad habit", "Mistake"],
         correct: 0
@@ -175,26 +185,31 @@ const questionBank = {
   waiting: {
     easy: [
       {
+        image: "https://images.pexels.com/photos/7092351/pexels-photo-7092351.jpeg?auto=compress&cs=tinysrgb&w=400",
         q: "Someone is talking?",
         options: ["Wait", "Interrupt", "Shout"],
         correct: 0
       },
       {
+        image: "https://images.pexels.com/photos/8617987/pexels-photo-8617987.jpeg?auto=compress&cs=tinysrgb&w=400",
         q: "In a queue you should?",
         options: ["Wait", "Push", "Leave"],
         correct: 0
       },
       {
+        image: "https://images.pexels.com/photos/8500643/pexels-photo-8500643.jpeg?auto=compress&cs=tinysrgb&w=400",
         q: "Waiting shows?",
         options: ["Patience", "Anger", "Noise"],
         correct: 0
       },
       {
+        image: "https://images.pexels.com/photos/8197534/pexels-photo-8197534.jpeg?auto=compress&cs=tinysrgb&w=400",
         q: "You should wait for your?",
         options: ["Turn", "Food only", "Nothing"],
         correct: 0
       },
       {
+        image: "https://images.pexels.com/photos/8419196/pexels-photo-8419196.jpeg?auto=compress&cs=tinysrgb&w=400",
         q: "Good habit is?",
         options: ["Waiting calmly", "Shouting", "Pushing"],
         correct: 0
@@ -261,26 +276,31 @@ const questionBank = {
   emotion: {
     easy: [
       {
+        image: "https://images.pexels.com/photos/256657/pexels-photo-256657.jpeg?auto=compress&cs=tinysrgb&w=400",
         q: "Friend is crying?",
         options: ["Help them", "Ignore", "Laugh"],
         correct: 0
       },
       {
+        image: "https://images.pexels.com/photos/5278985/pexels-photo-5278985.jpeg?auto=compress&cs=tinysrgb&w=400",
         q: "Happy face means?",
         options: ["Smiling", "Crying", "Angry"],
         correct: 0
       },
       {
+        image: "https://images.pexels.com/photos/256657/pexels-photo-256657.jpeg?auto=compress&cs=tinysrgb&w=400",
         q: "Sad means?",
         options: ["Crying", "Laughing", "Running"],
         correct: 0
       },
       {
+        image: "https://images.pexels.com/photos/7929377/pexels-photo-7929377.jpeg?auto=compress&cs=tinysrgb&w=400",
         q: "Angry face shows?",
         options: ["Mad", "Happy", "Calm"],
         correct: 0
       },
       {
+        image: "https://images.pexels.com/photos/5278985/pexels-photo-5278985.jpeg?auto=compress&cs=tinysrgb&w=400",
         q: "Emotion means?",
         options: ["Feeling", "Object", "Food"],
         correct: 0
@@ -347,26 +367,31 @@ const questionBank = {
   communication: {
     easy: [
       {
+        image: "https://images.pexels.com/photos/5905458/pexels-photo-5905458.jpeg?auto=compress&cs=tinysrgb&w=400",
         q: "Need help?",
         options: ["Say please", "Demand", "Silent"],
         correct: 0
       },
       {
+        image: "https://images.pexels.com/photos/8617758/pexels-photo-8617758.jpeg?auto=compress&cs=tinysrgb&w=400",
         q: "We talk with?",
         options: ["People", "Objects", "Food"],
         correct: 0
       },
       {
+        image: "https://images.pexels.com/photos/5278985/pexels-photo-5278985.jpeg?auto=compress&cs=tinysrgb&w=400",
         q: "Polite word is?",
         options: ["Please", "Shout", "Hit"],
         correct: 0
       },
       {
+        image: "https://images.pexels.com/photos/8197534/pexels-photo-8197534.jpeg?auto=compress&cs=tinysrgb&w=400",
         q: "We listen with?",
         options: ["Ears", "Eyes", "Hands"],
         correct: 0
       },
       {
+        image: "https://images.pexels.com/photos/8423069/pexels-photo-8423069.jpeg?auto=compress&cs=tinysrgb&w=400",
         q: "Good communication is?",
         options: ["Clear talk", "Shouting", "Fighting"],
         correct: 0

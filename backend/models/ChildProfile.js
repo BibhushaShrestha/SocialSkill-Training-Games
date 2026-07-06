@@ -30,6 +30,14 @@ const childProfileSchema = new mongoose.Schema(
       max: 100,
     },
     moduleProgress: [moduleProgressSchema],
+    totalCorrect: {
+      type: Number,
+      default: 0,
+    },
+    totalQuestions: {
+      type: Number,
+      default: 0,
+    },
     badges: {
       type: [String],
       default: [],

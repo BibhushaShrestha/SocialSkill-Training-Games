@@ -140,6 +140,11 @@
                         <div id="progressBar" class="progress-bar-fill h-full bg-gradient-to-r from-emerald-400 via-emerald-500 to-teal-500 rounded-full"
                              style="width: 0%;"></div>
                     </div>
+
+                    <div id="scoreStats" class="flex justify-center gap-6 mt-5 text-slate-600 text-sm font-medium">
+                        <span id="totalCorrectDisplay">✅ 0 correct</span>
+                        <span id="totalQuestionsDisplay">📝 0 attempted</span>
+                    </div>
                 </div>
             </div>
 
@@ -222,6 +227,8 @@
         document.getElementById('greeting').innerText = `Hello, ${d.childName}!`;
         document.getElementById('starsCount').innerText = d.stars;
         document.getElementById('progressPct').innerText = `${d.overallProgress}%`;
+        document.getElementById('totalCorrectDisplay').innerHTML = `✅ ${d.totalCorrect || 0} correct`;
+        document.getElementById('totalQuestionsDisplay').innerHTML = `📝 ${d.totalQuestions || 0} attempted`;
 
         const bar = document.getElementById('progressBar');
         bar.style.width = '0%';
@@ -232,7 +239,7 @@
       }
     }
 
-    window.addEventListener('load', loadDashboard);
+    window.addEventListener('pageshow', loadDashboard);
 </script>
 
 </body>

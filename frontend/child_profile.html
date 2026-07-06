@@ -47,13 +47,6 @@
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
-    .edit-btn {
-      background: #ffe082;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 20px;
-      cursor: pointer;
-    }
 
     .card {
       background: #ffffff;
@@ -151,7 +144,6 @@
         </button>
         <h2>My Profile</h2>
       </div>
-      <button class="edit-btn">Edit</button>
     </div>
 
     <!-- Profile -->
@@ -291,15 +283,22 @@
 
         if (d.badges && d.badges.length > 0) {
           const container = document.getElementById('badgesContainer');
-          container.innerHTML = d.badges.map(b =>
-            `<div class="badge">${b.icon}<br>${b.name}</div>`
-          ).join('');
+          const badgeMap = { Gold: { icon: '🥇', name: 'Gold' }, Silver: { icon: '🥈', name: 'Silver' }, Bronze: { icon: '🥉', name: 'Bronze' } };
+          d.badges.forEach(b => {
+            const info = badgeMap[b];
+            if (!info) return;
+            const div = document.createElement('div');
+            div.className = 'badge';
+            div.innerHTML = `${info.icon}<br>${info.name}`;
+            container.appendChild(div);
+          });
         }
       } catch (error) {
         console.error('Profile load error:', error);
       }
     }
 
+    window.addEventListener('pageshow', loadProfile);
     loadProfile();
     lucide.createIcons();
   </script>

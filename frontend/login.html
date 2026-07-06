@@ -57,6 +57,39 @@ input {
     border: 2px solid #eee;
     font-size: 14px;
     outline: none;
+    box-sizing: border-box;
+}
+
+.pwd-wrapper {
+    position: relative;
+    width: 100%;
+    margin: 10px 0;
+}
+
+.pwd-wrapper input {
+    margin: 0;
+    padding-right: 40px;
+}
+
+.pwd-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    font-size: 18px;
+    line-height: 1;
+    color: #888;
+    width: auto;
+}
+
+.pwd-toggle:hover {
+    transform: translateY(-50%) scale(1.1);
+    background: none;
 }
 
 input:focus {
@@ -103,7 +136,10 @@ button:hover {
 <div class="card">
 
 <input type="text" id="username" placeholder="Enter Username">
-<input type="password" id="password" placeholder="Enter Password">
+<div class="pwd-wrapper">
+  <input type="password" id="password" placeholder="Enter Password">
+  <button class="pwd-toggle" onclick="togglePwd('password', this)" type="button">👁️</button>
+</div>
 
 <!-- Login -->
 <button onclick="loginUser()">⭐ Start Learning</button>
@@ -132,6 +168,12 @@ function createAccount(){
 // go to forgot password page
 function forgotPassword(){
     window.location.href = "forgot_password.html";
+}
+
+function togglePwd(inputId, btn) {
+  const inp = document.getElementById(inputId);
+  if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
+  else { inp.type = 'password'; btn.textContent = '👁️'; }
 }
 
 // Redirect to dashboard if already logged in

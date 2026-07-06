@@ -140,7 +140,7 @@ h2 {
     if (!token || !module) return;
 
     try {
-      const res = await fetch(`${API}/games/module/${module}`, {
+      const res = await fetch(`${API}/games/module/${module}?_=${Date.now()}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();

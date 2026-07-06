@@ -14,12 +14,16 @@ const userSchema = new mongoose.Schema({
     type: String,
     sparse: true,
   },
+  phone: {
+    type: String,
+    sparse: true,
+  },
   password: {
     type: String,
     required: true,
   },
-  resetPasswordToken: String,
-  resetPasswordExpire: Date,
+  otp: String,
+  otpExpire: Date,
 }, {
   timestamps: true,
 });

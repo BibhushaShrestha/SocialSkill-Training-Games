@@ -29,6 +29,11 @@ const gameProgressSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    badge: {
+      type: String,
+      enum: ['Gold', 'Silver', 'Bronze', 'None'],
+      default: 'None',
+    },
     completed: {
       type: Boolean,
       default: false,

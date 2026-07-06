@@ -17,9 +17,6 @@ body {
   height: 100vh;
 }
 
-
-
-/* MAIN CONTAINER */
 .container {
   width: 90%;
   max-width: 650px;
@@ -31,7 +28,6 @@ body {
   border: 1px solid #eaf4f4;
 }
 
-/* QUESTION BOX */
 h2 {
   color: #2c3e50;
   background: #ffffff;
@@ -41,7 +37,6 @@ h2 {
   margin-bottom: 15px;
 }
 
-/* OPTIONS */
 .option {
   display: block;
   background: #ffffff;
@@ -63,7 +58,16 @@ h2 {
   border: 2px solid #b2dfdb;
 }
 
-/* BUTTONS */
+.correct {
+  background: #d4edda !important;
+  border: 2px solid #28a745 !important;
+}
+
+.wrong {
+  background: #f8d7da !important;
+  border: 2px solid #dc3545 !important;
+}
+
 button {
   width: 100%;
   padding: 12px;
@@ -75,18 +79,15 @@ button {
   font-weight: bold;
 }
 
-/* Submit */
-#submitBtn {
+#nextBtn {
   background: #c8e6c9;
   color: #2e4a3d;
 }
 
-/* Result screen */
 #resultScreen {
   display: none;
 }
 
-/* CORRECT */
 .correctBox {
   background: #dff5e1;
   border: 2px solid #a9dfbf;
@@ -95,7 +96,6 @@ button {
   animation: pop 0.3s ease, bounce 0.5s ease;
 }
 
-/* WRONG */
 .wrongBox {
   background: #fdecea;
   border: 2px solid #f5b7b1;
@@ -104,7 +104,14 @@ button {
   animation: pop 0.3s ease, shake 0.4s ease;
 }
 
-/* animations */
+.rewardBox {
+  background: #fff8dc;
+  border: 2px solid #f9e79f;
+  padding: 25px;
+  border-radius: 18px;
+  animation: pop 0.3s ease;
+}
+
 @keyframes pop {
   from { transform: scale(0.85); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
@@ -128,32 +135,28 @@ button {
 
 <body>
 
-    <div style="position:absolute; top:20px; left:20px;">
+<div style="position:absolute; top:20px; left:20px;">
   <button onclick="goBack()" style="
-    width: 45px;
-    height: 45px;
-    border-radius: 12px;
-    border: none;
-    background: white;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    cursor: pointer;
-    font-size: 18px;
-  ">
-    ←
-  </button>
+    width: 45px; height: 45px; border-radius: 12px; border: none;
+    background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    cursor: pointer; font-size: 18px;
+  ">←</button>
 </div>
 
 <div class="container">
 
-  <!-- QUIZ -->
   <div id="quizScreen">
+    <img id="questionImage" style="display:none; max-width:100%; width:auto; height:auto; max-height:220px; border-radius:12px; margin:0 auto 10px auto; object-fit:contain;" alt="Scenario image">
     <h2 id="question">Loading...</h2>
+    <div style="display:flex; gap:8px; justify-content:center; margin-bottom:8px;">
+      <button onclick="repeatQuestion()" style="background:none; border:1px solid #ddd; border-radius:10px; padding:6px 14px; font-size:14px; cursor:pointer;">🔊 Repeat</button>
+      <button onclick="readOptions()" style="background:none; border:1px solid #ddd; border-radius:10px; padding:6px 14px; font-size:14px; cursor:pointer;">🔊 Read Options</button>
+    </div>
     <div id="options"></div>
-
-    <button id="submitBtn" onclick="submitAnswer()">SUBMIT</button>
+    <div id="feedback" style="margin-top:12px; text-align:center; font-weight:bold; font-size:16px;"></div>
+    <button id="nextBtn" onclick="nextQuestion()" style="display:none; width:100%; padding:14px; border:none; border-radius:14px; background:#a9dfbf; cursor:pointer; font-size:16px;">NEXT ➜</button>
   </div>
 
-  <!-- RESULT -->
   <div id="resultScreen">
     <div id="resultBox"></div>
   </div>
@@ -161,114 +164,210 @@ button {
 </div>
 
 <script src="questions.js"></script>
-
 <script>
+const API = 'http://localhost:5000/api';
+const token = localStorage.getItem('token');
+
 const params = new URLSearchParams(window.location.search);
-const module = params.get("module");
-const level = params.get("level");
+const module = params.get('module');
+const level = params.get('level');
 
-const questions = questionBank[module][level];
-
+let questions = [];
 let index = 0;
 let selected = null;
+let answered = false;
 let score = 0;
 
-function loadQuestion() {
-  selected = null;
+// ---- Load questions from backend (without answers) ----
+async function loadQuestions() {
+  if (!token || !module || !level) {
+    document.getElementById('question').innerText = 'Missing module or level';
+    return;
+  }
+  try {
+    const res = await fetch(`${API}/games/module/${module}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const data = await res.json();
+    if (!data.success) {
+      document.getElementById('question').innerText = 'Failed to load questions';
+      return;
+    }
+  } catch (_) {}
 
-  document.getElementById("quizScreen").style.display = "block";
-  document.getElementById("resultScreen").style.display = "none";
+  // Questions are hardcoded on frontend for speed; answers validated by backend
+  if (typeof questionBank !== 'undefined' && questionBank[module]?.[level]) {
+    questions = questionBank[module][level];
+  } else {
+    document.getElementById('question').innerText = 'Questions not available';
+    return;
+  }
+  loadQuestion();
+}
 
+function repeatQuestion() {
   const q = questions[index];
+  if (q && window.speechSynthesis) {
+    const utterance = new SpeechSynthesisUtterance(q.q);
+    utterance.rate = 0.9;
+    utterance.pitch = 1.1;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(utterance);
+  }
+}
 
-  document.getElementById("question").innerText =
-    `Q${index + 1}. ${q.q}`;
-
-  const optionsDiv = document.getElementById("options");
-  optionsDiv.innerHTML = "";
-
+function readOptions() {
+  const q = questions[index];
+  if (!q || !window.speechSynthesis) return;
+  speechSynthesis.cancel();
   q.options.forEach((opt, i) => {
-    const div = document.createElement("div");
-    div.classList.add("option");
-    div.innerText = opt;
-
-    div.onclick = () => {
-      document.querySelectorAll(".option").forEach(o => o.classList.remove("selected"));
-      div.classList.add("selected");
-      selected = i;
-    };
-
-    optionsDiv.appendChild(div);
+    const utterance = new SpeechSynthesisUtterance(`Option ${i + 1}: ${opt}`);
+    utterance.rate = 0.9;
+    utterance.pitch = 1.1;
+    setTimeout(() => speechSynthesis.speak(utterance), i * 2500);
   });
 }
 
-function submitAnswer() {
-  if (selected === null) {
-    alert("Please select an answer!");
-    return;
-  }
+function loadQuestion() {
+  selected = null;
+  answered = false;
+  document.getElementById('quizScreen').style.display = 'block';
+  document.getElementById('resultScreen').style.display = 'none';
+  document.getElementById('nextBtn').style.display = 'none';
+  document.getElementById('feedback').innerText = '';
 
-  const correct = questions[index].correct;
-  const correctText = questions[index].options[correct];
-
-  document.getElementById("quizScreen").style.display = "none";
-  document.getElementById("resultScreen").style.display = "block";
-
-  let html = "";
-
-  if (selected === correct) {
-    score++;
-
-    html = `
-      <div class="correctBox">
-        <h2>🎉 Great Job!</h2>
-        <p>You got it right!</p>
-        <p>⭐ You earned a star!</p>
-
-        <button onclick="nextQuestion()" 
-          style="margin-top:15px; width:100%; padding:12px;
-          border:none; border-radius:14px;
-          background:#a9dfbf; cursor:pointer;">
-          NEXT QUESTION ➜
-        </button>
-      </div>
-    `;
+  const q = questions[index];
+  const imgEl = document.getElementById('questionImage');
+  if (q.image) {
+    imgEl.style.display = 'block';
+    imgEl.src = q.image;
   } else {
-    html = `
-      <div class="wrongBox">
-        <h2>❌ Oops!</h2>
-        <p>Correct answer is:</p>
-        <h3>${correctText}</h3>
-
-        <p>💡 Try again!</p>
-
-        <button onclick="retryQuestion()" 
-          style="margin-top:15px; width:100%; padding:12px;
-          border:none; border-radius:14px;
-          background:#f5b7b1; cursor:pointer;">
-          TRY AGAIN 🔁
-        </button>
-      </div>
-    `;
+    imgEl.style.display = 'none';
+    imgEl.src = '';
   }
+  document.getElementById('question').innerText = `Q${index + 1}. ${q.q}`;
 
-  document.getElementById("resultBox").innerHTML = html;
+  const optionsDiv = document.getElementById('options');
+  optionsDiv.innerHTML = '';
+
+  q.options.forEach((opt, i) => {
+    const div = document.createElement('div');
+    div.classList.add('option');
+    div.innerText = opt;
+    div.onclick = () => handleOptionClick(div, i);
+    optionsDiv.appendChild(div);
+  });
+
+  repeatQuestion();
 }
 
-function retryQuestion() {
-  document.getElementById("resultScreen").style.display = "none";
-  document.getElementById("quizScreen").style.display = "block";
+// ---- On click: validate immediately, disable, show correct answer + Next ----
+async function handleOptionClick(div, selectedIndex) {
+  if (answered) return;
+  answered = true;
+  selected = selectedIndex;
+
+  const allOptions = document.querySelectorAll('.option');
+  allOptions.forEach(o => { o.style.pointerEvents = 'none'; o.classList.remove('selected'); });
+  div.classList.add('selected');
+
+  try {
+    const res = await fetch(`${API}/games/check-answer`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ module, level, questionIndex: index, userAnswer: selected }),
+    });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.message);
+
+    const correctIndex = questions[index].correct;
+    const feedbackEl = document.getElementById('feedback');
+
+    if (data.correct) {
+      score++;
+      div.classList.add('correct');
+      feedbackEl.innerHTML = '✅ <span style="color:#28a745;">Correct! Great job!</span>';
+    } else {
+      div.classList.add('wrong');
+      allOptions[correctIndex].classList.add('correct');
+      feedbackEl.innerHTML = `❌ <span style="color:#dc3545;">Incorrect.</span> Correct answer: <strong>${questions[index].options[correctIndex]}</strong>`;
+    }
+
+    document.getElementById('nextBtn').style.display = 'block';
+  } catch (err) {
+    console.error('Check answer error:', err);
+    alert('Error checking answer');
+    answered = false;
+  }
+}
+
+// ---- Save results to backend ----
+async function saveQuizToBackend() {
+  const childId = await getChildProfileId();
+  if (!childId || !token) {
+    console.error('Cannot save: missing childId or token');
+    return null;
+  }
+  try {
+    const res = await fetch(`${API}/games`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        child: childId, module, level, score, total: questions.length, completed: true,
+      }),
+    });
+    return await res.json();
+  } catch (err) {
+    console.error('Save failed:', err);
+    return null;
+  }
+}
+
+// ---- Algorithm 3: Show rewards on quiz end ----
+async function saveAndShowRewards() {
+  const data = await saveQuizToBackend();
+  if (!data?.success) {
+    console.warn('Quiz result may not have saved');
+  }
+
+  const reward = data?.reward || { stars: 0, badge: 'None' };
+  const badgeEmoji = { Gold: '🥇', Silver: '🥈', Bronze: '🥉', None: '' };
+  const badgeText = reward.badge !== 'None' ? `<p>🏅 Badge: ${badgeEmoji[reward.badge]} ${reward.badge}</p>` : '';
+
+  document.getElementById('resultBox').innerHTML = `
+    <div class="rewardBox">
+      <h2>🎉 Quiz Finished!</h2>
+      <p>Your Score: ${score} / ${questions.length}</p>
+      <p>⭐ Stars Earned: ${reward.stars > 0 ? '⭐'.repeat(reward.stars) : 'None'}</p>
+      ${badgeText}
+      <p>Great job! 🌟</p>
+    </div>
+  `;
+}
+
+function nextQuestion() {
+  index++;
+  if (index < questions.length) {
+    loadQuestion();
+  } else {
+    document.getElementById('quizScreen').style.display = 'none';
+    document.getElementById('resultScreen').style.display = 'block';
+    saveAndShowRewards();
+  }
 }
 
 async function getChildProfileId() {
   let id = localStorage.getItem('childProfileId');
   if (id) return id;
-
-  const token = localStorage.getItem('token');
   if (!token) return null;
-
   try {
-    const res = await fetch('http://localhost:5000/api/games/dashboard/me', {
+    const res = await fetch(`${API}/games/dashboard/me`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     const data = await res.json();
@@ -276,64 +375,15 @@ async function getChildProfileId() {
       localStorage.setItem('childProfileId', data.dashboard.id);
       return data.dashboard.id;
     }
-  } catch (err) {
-    console.error('Failed to fetch profile:', err);
-  }
+  } catch (_) {}
   return null;
 }
 
-async function saveQuizResult() {
-  const childId = await getChildProfileId();
-  const token = localStorage.getItem('token');
-  if (!childId || !token) return;
-
-  try {
-    await fetch('http://localhost:5000/api/games', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        child: childId,
-        module,
-        level,
-        score,
-        total: questions.length,
-        completed: true,
-      }),
-    });
-  } catch (err) {
-    console.error('Failed to save quiz result:', err);
-  }
-}
-
-function nextQuestion() {
-  index++;
-
-  if (index < questions.length) {
-    loadQuestion();
-  } else {
-    saveQuizResult();
-
-    document.getElementById("resultBox").innerHTML = `
-      <div class="correctBox">
-        <h2>🎉 Quiz Finished!</h2>
-        <p>Your Score: ${score} / ${questions.length}</p>
-        <p>Great job! 🌟</p>
-      </div>
-    `;
-
-    document.getElementById("quizScreen").style.display = "none";
-    document.getElementById("resultScreen").style.display = "block";
-  }
-}
-
-loadQuestion();
-
-function goBack(){
+function goBack() {
   window.location.href = `level.html?module=${module}`;
 }
+
+loadQuestions();
 </script>
 
 </body>

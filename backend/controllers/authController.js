@@ -1,74 +1,128 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import crypto from 'crypto';
 import User from '../models/User.js';
 import ChildProfile from '../models/ChildProfile.js';
+import { sendOtpSms } from '../config/sms.js';
 
-// FORGOT PASSWORD
-export const forgotPassword = async (req, res) => {
+const normalizePhone = (p) => (p || '').replace(/\D/g, '');
+
+// ---- SEND OTP ----
+export const sendOtp = async (req, res) => {
   try {
-    const { email } = req.body;
+    const phone = normalizePhone(req.body.phone);
 
-    if (!email) {
-      return res.status(400).json({
-        success: false,
-        message: 'Email is required',
-      });
+    if (!phone) {
+      return res.status(400).json({ success: false, message: 'Phone number is required' });
     }
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ phone });
     if (!user) {
+      // Fallback: maybe the user registered before phone field was added
+      const legacyUser = await User.findOne({ email: req.body.phone });
+      if (legacyUser) {
+        legacyUser.phone = phone;
+        await legacyUser.save();
+        return await sendOtpForUser(legacyUser, phone, res);
+      }
       return res.status(200).json({
         success: true,
-        message: 'If an account exists with that email, a reset link has been sent.',
+        message: 'If an account exists with that number, an OTP has been sent.',
       });
     }
 
-    const resetToken = crypto.randomBytes(20).toString('hex');
-    user.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
-    user.resetPasswordExpire = Date.now() + 3600000;
-    await user.save({ validateBeforeSave: false });
+    return await sendOtpForUser(user, phone, res);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
 
-    // In production, send email with: `${req.protocol}://${req.get('host')}/api/auth/reset/${resetToken}`
-    console.log(`Reset token for ${email}: ${resetToken}`);
+async function sendOtpForUser(user, phone, res) {
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  user.otp = otp;
+  user.otpExpire = Date.now() + 600000; // 10 minutes
+  await user.save({ validateBeforeSave: false });
+
+  const result = await sendOtpSms(phone, otp);
+
+  if (result?.devMode) {
+    return res.status(200).json({
+      success: true,
+      message: 'OTP sent (dev mode — see below).',
+      otp: result.otp,
+    });
+  }
+
+  res.status(200).json({
+    success: true,
+    message: 'OTP sent to your phone.',
+  });
+}
+
+// ---- VERIFY OTP ----
+export const verifyOtp = async (req, res) => {
+  try {
+    const phone = normalizePhone(req.body.phone);
+    const { otp } = req.body;
+
+    if (!phone || !otp) {
+      return res.status(400).json({ success: false, message: 'Phone and OTP are required' });
+    }
+
+    const user = await User.findOne({
+      phone,
+      otp,
+      otpExpire: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({ success: false, message: 'Invalid or expired OTP' });
+    }
+
+    // Issue a short-lived temp token for password reset
+    const tempToken = jwt.sign(
+      { phone: user.phone, purpose: 'reset' },
+      process.env.JWT_SECRET,
+      { expiresIn: '10m' },
+    );
 
     res.status(200).json({
       success: true,
-      message: 'If an account exists with that email, a reset link has been sent.',
+      message: 'OTP verified successfully',
+      tempToken,
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// RESET PASSWORD
-export const resetPassword = async (req, res) => {
+// ---- RESET PASSWORD (after OTP verification) ----
+export const resetPasswordWithOtp = async (req, res) => {
   try {
-    const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
+    const { tempToken, password } = req.body;
 
-    const user = await User.findOne({
-      resetPasswordToken: hashedToken,
-      resetPasswordExpire: { $gt: Date.now() },
-    });
-
-    if (!user) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid or expired token',
-      });
+    if (!tempToken || !password) {
+      return res.status(400).json({ success: false, message: 'Token and password are required' });
     }
 
-    const { password } = req.body;
-    if (!password) {
-      return res.status(400).json({
-        success: false,
-        message: 'Password is required',
-      });
+    let decoded;
+    try {
+      decoded = jwt.verify(tempToken, process.env.JWT_SECRET);
+    } catch (_) {
+      return res.status(400).json({ success: false, message: 'Invalid or expired token. Please verify OTP again.' });
+    }
+
+    if (decoded.purpose !== 'reset') {
+      return res.status(400).json({ success: false, message: 'Invalid token purpose' });
+    }
+
+    const user = await User.findOne({ phone: decoded.phone });
+    if (!user) {
+      return res.status(400).json({ success: false, message: 'User not found' });
     }
 
     user.password = await bcrypt.hash(password, 10);
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpire = undefined;
+    user.otp = undefined;
+    user.otpExpire = undefined;
     await user.save();
 
     res.status(200).json({
@@ -80,36 +134,32 @@ export const resetPassword = async (req, res) => {
   }
 };
 
-// REGISTER USER
+// ---- REGISTER USER ----
 export const registerUser = async (req, res) => {
   try {
-
-    const { childName, username, email, password } = req.body;
+    const { childName, username, email } = req.body;
+    const phone = normalizePhone(req.body.phone);
+    const { password } = req.body;
 
     if (!childName || !username || !password) {
       return res.status(400).json({
         success: false,
-        message: 'All fields are required',
+        message: 'Child name, username, and password are required',
       });
     }
 
-    // Check existing user
     const existingUser = await User.findOne({ username });
-
     if (existingUser) {
-      return res.status(400).json({
-        success: false,
-        message: 'Username already exists',
-      });
+      return res.status(400).json({ success: false, message: 'Username already exists' });
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
       childName,
       username,
       email,
+      phone,
       password: hashedPassword,
     });
 
@@ -128,87 +178,40 @@ export const registerUser = async (req, res) => {
     res.status(201).json({
       success: true,
       message: 'Account created successfully',
-      user: {
-        id: user._id,
-        childName: user.childName,
-        username: user.username,
-      },
+      user: { id: user._id, childName: user.childName, username: user.username },
     });
-
   } catch (error) {
-
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
-
-// LOGIN USER
+// ---- LOGIN USER ----
 export const loginUser = async (req, res) => {
   try {
-
     const { username, password } = req.body;
 
-    // Validation
     if (!username || !password) {
-      return res.status(400).json({
-        success: false,
-        message: 'Username and password required',
-      });
+      return res.status(400).json({ success: false, message: 'Username and password required' });
     }
 
-    // Find user
     const user = await User.findOne({ username });
-
     if (!user) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid credentials',
-      });
+      return res.status(400).json({ success: false, message: 'Invalid credentials' });
     }
 
-    // Compare password
-    const isMatch = await bcrypt.compare(
-      password,
-      user.password
-    );
-
+    const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid credentials',
-      });
+      return res.status(400).json({ success: false, message: 'Invalid credentials' });
     }
 
-    // Generate token
-    const token = jwt.sign(
-      {
-        id: user._id,
-      },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: '7d',
-      }
-    );
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
     res.status(200).json({
       success: true,
       token,
-
-      user: {
-        id: user._id,
-        childName: user.childName,
-        username: user.username,
-      },
+      user: { id: user._id, childName: user.childName, username: user.username },
     });
-
   } catch (error) {
-
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
