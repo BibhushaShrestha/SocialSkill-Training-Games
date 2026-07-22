@@ -1,8 +1,12 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 import connectDB from './config/db.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 import authRoutes from './routes/authRoutes.js';
 import childRoutes from './routes/childRoutes.js';
@@ -14,6 +18,8 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+app.use(express.static(path.join(__dirname, '..', 'frontend')));
 
 app.get('/', (req, res) => {
   res.send('Social Skill Training Backend Running');

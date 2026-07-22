@@ -1,214 +1,661 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Dashboard – 75% Width Centered</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        
-        body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background: #eaf4f4;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem 1rem;
-        }
-        
-        .container {
-            width: 100%;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        
-        .content-wrapper {
-            width: 100%;
-            max-width: 75%;
-            margin: 0 auto;
-        }
-        
-        .card {
-            background: white;
-            border-radius: 1.5rem;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.08),
-                        0 5px 10px -5px rgba(0,0,0,0.05);
-        }
-        
-        .stars-badge {
-            background: linear-gradient(135deg, #fef08a 0%, #fde047 100%);
-            color: #713f12;
-            padding: 0.85rem 1.8rem;
-            border-radius: 9999px;
-            font-weight: 700;
-            font-size: 1.35rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.6rem;
-            box-shadow: 0 6px 16px -4px rgba(0,0,0,0.12);
-            border: 2px solid #facc15;
-        }
-        
-        .progress-bar-fill {
-            transition: width 1.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        
-        .start-btn {
-            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-            background: #8af0c7;;
-        }
-        
-        .start-btn:hover {
-            transform: scale(1.06);
-            background: #8af0c7;
-            box-shadow: 0 20px 30px -10px rgba(0,0,0,0.12);
-        }
-        
-        .icon-btn {
-            transition: all 0.2s ease;
-        }
-        
-        .icon-btn:hover {
-            transform: scale(1.12);
-            background: #f1f5f9;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Learning Dashboard</title>
 
-        @media (max-width: 1024px) {
-            .content-wrapper { max-width: 85%; }
-        }
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 
-        @media (max-width: 640px) {
-            .content-wrapper { max-width: 100%; }
-            body { padding: 1.25rem 0.75rem; }
-            h1 { font-size: 1.8rem; }
-            .stars-badge { font-size: 1.2rem; padding: 0.7rem 1.4rem; }
-        }
-    </style>
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    body{
+      font-family:'Nunito',sans-serif;
+      min-height:100vh;
+      background:#FFF9C4;
+      background-attachment:fixed;
+      overflow-x:hidden;
+      display:flex;
+      justify-content:center;
+      padding:24px;
+    }
+
+    .float-el{
+      position:fixed;
+      pointer-events:none;
+      opacity:.25;
+      z-index:0;
+      animation:floatAnim 8s ease-in-out infinite;
+    }
+
+    .float-el:nth-child(1){ top:10%; left:5%; font-size:3rem; }
+    .float-el:nth-child(2){ top:70%; left:8%; font-size:2.5rem; animation-delay:2s; }
+    .float-el:nth-child(3){ top:20%; right:5%; font-size:2rem; animation-delay:4s; }
+    .float-el:nth-child(4){ top:80%; right:10%; font-size:3.5rem; animation-delay:1s; }
+    .float-el:nth-child(5){ top:50%; left:3%; font-size:1.8rem; animation-delay:3s; }
+    .float-el:nth-child(6){ top:40%; right:3%; font-size:2.2rem; animation-delay:5s; }
+    .float-el:nth-child(7){ top:5%; right:25%; font-size:2.8rem; animation-delay:1.5s; }
+    .float-el:nth-child(8){ top:88%; left:30%; font-size:2.4rem; animation-delay:3.5s; }
+
+    @keyframes floatAnim{
+      0%,100%{ transform:translateY(0) rotate(0deg); }
+      25%{ transform:translateY(-20px) rotate(5deg); }
+      50%{ transform:translateY(-10px) rotate(-3deg); }
+      75%{ transform:translateY(-25px) rotate(4deg); }
+    }
+
+    .bg-dots{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+      opacity:.08;
+      background-image:radial-gradient(circle,#FF8A65 1px,transparent 1px);
+      background-size:30px 30px;
+    }
+
+    /* ===== Slightly zoomed out container ===== */
+    .container{
+      width:min(1200px,100%);
+      position:relative;
+      z-index:1;
+      transform:scale(.82);
+      transform-origin:center center;
+    }
+
+    /* ===== Slow floating cartoon star ===== */
+    .hero-star{
+      position:absolute;
+      top:72px;
+      right:-8px;
+      font-size:72px;
+      z-index:2;
+      filter:drop-shadow(0 8px 18px rgba(255,201,64,.35));
+      animation:slowStarFloat 6s ease-in-out infinite;
+    }
+
+    @keyframes slowStarFloat{
+      0%,100%{ transform:translateY(0) rotate(0deg); }
+      25%{ transform:translateY(-6px) rotate(2deg); }
+      50%{ transform:translateY(-12px) rotate(-2deg); }
+      75%{ transform:translateY(-6px) rotate(1deg); }
+    }
+
+    /* ===== Header ===== */
+    .header{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:20px;
+      margin-bottom:26px;
+    }
+
+    .left{
+      display:flex;
+      gap:18px;
+      align-items:flex-start;
+    }
+
+    .avatar{
+      width:88px;
+      height:88px;
+      border-radius:26px;
+      background:#FFD8B4;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:42px;
+      box-shadow:0 10px 24px rgba(0,0,0,.08);
+      animation:avatarFloat 3.8s ease-in-out infinite;
+    }
+
+    @keyframes avatarFloat{
+      0%,100%{ transform:translateY(0); }
+      50%{ transform:translateY(-6px); }
+    }
+
+    .title h1{
+      font-family:'Baloo 2',cursive;
+      font-size:54px;
+      line-height:1;
+      color:#1B2C55;
+      margin-bottom:6px;
+    }
+
+    .title p{
+      font-size:26px;
+      font-weight:700;
+      color:#374A66;
+    }
+
+    .right{
+      display:flex;
+      gap:14px;
+    }
+
+    .icon-btn{
+      width:56px;
+      height:56px;
+      border-radius:18px;
+      background:rgba(255,255,255,.9);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:22px;
+      color:#1B2C55;
+      box-shadow:0 8px 20px rgba(0,0,0,.08);
+      transition:transform .25s ease, box-shadow .25s ease;
+      cursor:pointer;
+    }
+
+    .icon-btn:hover{
+      transform:translateY(-4px) scale(1.05);
+      box-shadow:0 16px 28px rgba(0,0,0,.14);
+    }
+
+    /* ===== Cards ===== */
+    .card{
+      background:rgba(255,255,255,.92);
+      backdrop-filter:blur(10px);
+      border-radius:34px;
+      padding:38px;
+      box-shadow:0 18px 36px rgba(0,0,0,.06);
+      border:1px solid rgba(255,255,255,.7);
+    }
+
+    /* Stars badge */
+    .badge-wrap{
+      display:flex;
+      justify-content:center;
+      margin-bottom:34px;
+    }
+
+    .badge{
+      background:linear-gradient(135deg,#FFC940,#FFB300);
+      color:#1B2C55;
+      border-radius:999px;
+      padding:14px 28px;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      font-size:28px;
+      font-weight:800;
+      box-shadow:0 10px 26px rgba(255,201,64,.35);
+      animation:badgePulse 3s ease-in-out infinite;
+    }
+
+    @keyframes badgePulse{
+      0%,100%{ transform:scale(1); }
+      50%{ transform:scale(1.03); }
+    }
+
+    .progress-row{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:16px;
+      margin-bottom:18px;
+    }
+
+    .progress-title{
+      font-family:'Baloo 2',cursive;
+      font-size:34px;
+      color:#1E315B;
+    }
+
+    .percent{
+      font-family:'Baloo 2',cursive;
+      font-size:58px;
+      color:#7DD37A;
+      line-height:.9;
+    }
+
+    .bar{
+      height:26px;
+      background:#F6F0B8;
+      border-radius:999px;
+      overflow:hidden;
+      box-shadow:inset 0 2px 6px rgba(0,0,0,.06);
+    }
+
+    .fill{
+      width:64%;
+      height:100%;
+      background:linear-gradient(90deg,#8BCF8A,#66BB6A);
+      border-radius:999px;
+      position:relative;
+      overflow:hidden;
+      animation:fillGrow 1.4s ease-out;
+    }
+
+    .fill::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);
+      transform:translateX(-100%);
+      animation:shimmer 3s linear infinite;
+    }
+
+    @keyframes fillGrow{
+      from{ width:0; }
+      to{ width:64%; }
+    }
+
+    @keyframes shimmer{
+      to{ transform:translateX(100%); }
+    }
+
+    .stats{
+      margin-top:24px;
+      display:flex;
+      justify-content:center;
+      gap:56px;
+      flex-wrap:wrap;
+      font-size:24px;
+      font-weight:700;
+    }
+
+    .correct{ color:#49C05A; }
+    .attempt{ color:#60C8F3; }
+
+    /* ===== Start button ===== */
+    .learn{
+      margin-top:28px;
+      height:126px;
+      border:none;
+      width:100%;
+      border-radius:36px;
+      background:linear-gradient(135deg,#A7D79C,#81C784);
+      color:#fff;
+      font-family:'Baloo 2',cursive;
+      font-size:50px;
+      font-weight:800;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:22px;
+      cursor:pointer;
+      box-shadow:0 16px 34px rgba(129,199,132,.35);
+      transition:transform .25s ease, box-shadow .25s ease;
+    }
+
+    .learn:hover{
+      transform:translateY(-6px) scale(1.01);
+      box-shadow:0 24px 42px rgba(129,199,132,.45);
+    }
+
+    .play{
+      width:60px;
+      height:60px;
+      border-radius:50%;
+      background:#fff;
+      color:#24365B;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:26px;
+      transition:transform .4s ease;
+    }
+
+    .learn:hover .play{
+      transform:rotate(360deg);
+    }
+
+    /* ===== Quote card (layout from second file, rotation from first file) ===== */
+    .quote{
+      margin-top:28px;
+      background:rgba(255,255,255,.92);
+      backdrop-filter:blur(10px);
+      border-radius:32px;
+      padding:30px 34px;
+      box-shadow:0 18px 36px rgba(0,0,0,.06);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:18px;
+    }
+
+    .quote-emoji{
+      font-size:42px;
+      animation:emojiBounce 2.5s ease-in-out infinite;
+    }
+
+    @keyframes emojiBounce{
+      0%,100%{ transform:translateY(0); }
+      50%{ transform:translateY(-6px); }
+    }
+
+    .quote-content{
+      flex:1;
+      text-align:center;
+    }
+
+    .quote-text{
+      font-family:'Baloo 2',cursive;
+      font-size:34px;
+      line-height:1.25;
+      color:#22345C;
+      transition:opacity .6s ease, transform .6s ease;
+    }
+
+    .quote-text.fade-out{
+      opacity:0;
+      transform:translateY(8px);
+    }
+
+    .quote-text.fade-in{
+      opacity:1;
+      transform:translateY(0);
+    }
+
+    .dots{
+      margin-top:16px;
+      display:flex;
+      justify-content:center;
+      gap:10px;
+    }
+
+    .dot{
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      background:#F2E8B5;
+      transition:all .3s ease;
+    }
+
+    .dot.active{
+      width:36px;
+      border-radius:999px;
+      background:#F58A62;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 900px){
+      .container{ transform:scale(.96); }
+      .title h1{ font-size:42px; }
+      .title p{ font-size:22px; }
+      .percent{ font-size:48px; }
+      .learn{ font-size:40px; height:110px; }
+      .quote-text{ font-size:26px; }
+      .hero-star{ font-size:56px; right:0; top:56px; }
+    }
+
+    @media (max-width: 640px){
+      body{ padding:14px; }
+      .container{ transform:none; }
+
+      .header{
+        flex-direction:column;
+        align-items:stretch;
+      }
+
+      .right{
+        align-self:flex-end;
+      }
+
+      .left{
+        align-items:center;
+      }
+
+      .avatar{
+        width:72px;
+        height:72px;
+        font-size:34px;
+      }
+
+      .title h1{
+        font-size:34px;
+      }
+
+      .title p{
+        font-size:18px;
+      }
+
+      .card{
+        padding:24px;
+        border-radius:26px;
+      }
+
+      .progress-row{
+        align-items:center;
+      }
+
+      .progress-title{
+        font-size:28px;
+      }
+
+      .percent{
+        font-size:42px;
+      }
+
+      .stats{
+        gap:18px;
+        font-size:18px;
+      }
+
+      .learn{
+        height:92px;
+        font-size:30px;
+        gap:14px;
+        border-radius:26px;
+      }
+
+      .play{
+        width:48px;
+        height:48px;
+        font-size:20px;
+      }
+
+      .quote{
+        flex-direction:column;
+        padding:24px 20px;
+      }
+
+      .quote-text{
+        font-size:22px;
+      }
+
+      .hero-star{
+        top:18px;
+        right:6px;
+        font-size:44px;
+      }
+    }
+  </style>
 </head>
 <body>
 
-    <div class="container">
 
-        <!-- Header -->
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-10 gap-6 px-4 md:px-0">
-            <div class="flex items-center gap-5">
-                <div class="w-14 h-14 bg-yellow-300 rounded-2xl flex items-center justify-center text-3xl shadow-inner">
-                    👤
-                </div>
-                <div>
-                    <div class="flex items-center gap-3">
-                        <h1 id="greeting" class="text-3xl md:text-4xl font-semibold text-slate-800">Hello!</h1>
-                        <span class="text-4xl md:text-5xl">👋</span>
-                    </div>
-                    <p class="text-slate-500 text-lg md:text-xl mt-1">Ready to learn today?</p>
-                </div>
-            </div>
 
-            <div class="flex gap-4">
-                <!-- 👤 Profile Button -->
-                <button onclick="goProfile()" class="icon-btn w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm">
-                    <i class="fa-solid fa-user text-slate-600 text-xl"></i>
-                </button>
+  <div class="float-el">🌟</div>
+  <div class="float-el">⭐</div>
+  <div class="float-el">🌻</div>
+  <div class="float-el">🌈</div>
+  <div class="float-el">✨</div>
+  <div class="float-el">🌼</div>
+  <div class="float-el">☀️</div>
+  <div class="float-el">💛</div>
+  <div class="bg-dots"></div>
 
-                <button onclick="goLogin()" class="icon-btn w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm">
-                    <i class="fa-solid fa-arrow-right-from-bracket text-slate-600 text-xl"></i>
-                </button>
-            </div>
+  <div class="container">
+
+    <div class="hero-star">⭐</div>
+
+    <!-- Header from second file -->
+    <div class="header">
+      <div class="left">
+        <div class="avatar">😊</div>
+
+        <div class="title">
+          <h1 id="greeting">Hello, Maria! 👋</h1>
+          <p>Ready to learn today?</p>
         </div>
+      </div>
 
-        <!-- Main Content -->
-        <div class="content-wrapper">
-
-            <!-- Progress Card -->
-            <div class="card p-10 pb-12 mb-10 relative">
-                <div class="flex justify-center mb-9 -mt-5">
-                    <div class="stars-badge">
-                        <span>⭐</span> <span id="starsCount">0</span> Stars
-                    </div>
-                </div>
-
-                <div class="mt-2">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-baseline mb-5 gap-4">
-                        <span class="text-slate-600 font-medium text-xl">Overall Progress</span>
-                        <span id="progressPct" class="text-emerald-600 font-bold text-4xl">0%</span>
-                    </div>
-                    
-                    <div class="h-5 bg-gray-100 rounded-full overflow-hidden shadow-inner">
-                        <div id="progressBar" class="progress-bar-fill h-full bg-gradient-to-r from-emerald-400 via-emerald-500 to-teal-500 rounded-full"
-                             style="width: 0%;"></div>
-                    </div>
-
-                    <div id="scoreStats" class="flex justify-center gap-6 mt-5 text-slate-600 text-sm font-medium">
-                        <span id="totalCorrectDisplay">✅ 0 correct</span>
-                        <span id="totalQuestionsDisplay">📝 0 attempted</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Start Button -->
-            <button onclick="startLearning()"
-                    class="start-btn w-full text-slate-800 font-bold text-2xl py-7 rounded-3xl flex items-center justify-center gap-4 shadow-lg active:scale-95">
-                <i class="fa-solid fa-play text-3xl"></i>
-                Start Learning
-            </button>
-
-            <!-- Motivation -->
-            <div class="card p-8 mt-10 text-center">
-                <div class="flex justify-center items-center gap-6 text-4xl mb-3">
-                    <span>💪</span>
-                    <p class="text-slate-700 text-xl font-medium leading-relaxed">
-                        Every day you're getting better!<br>Keep it up!
-                    </p>
-                    <span>💪</span>
-                </div>
-            </div>
-
-            <!-- Help -->
-            <div class="flex justify-end mt-8">
-                <button class="w-10 h-10 bg-white rounded-2xl flex items-center justify-center shadow-sm text-slate-500 hover:text-slate-700 text-xl font-medium transition-colors">
-                    ?
-                </button>
-            </div>
-
+      <div class="right">
+        <div class="icon-btn" title="Profile">
+          <i class="fa-solid fa-user"></i>
         </div>
+        <div class="icon-btn" title="Logout">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress card from second file -->
+    <div class="card">
+
+      <div class="badge-wrap">
+        <div class="badge">
+          ⭐ <span id="starsCount">6</span> Stars
+        </div>
+      </div>
+
+      <div class="progress-row">
+        <div class="progress-title">Overall Progress</div>
+        <div class="percent" id="progressPct">64%</div>
+      </div>
+
+      <div class="bar">
+        <div class="fill" id="progressBar"></div>
+      </div>
+
+      <div class="stats">
+        <div class="correct">✔ <span id="correctCount">16</span> correct</div>
+        <div class="attempt">✨ <span id="attemptCount">25</span> attempted</div>
+      </div>
 
     </div>
 
-    <script>
+    <!-- Start button from second file -->
+    <button class="learn" onclick="startLearning()">
+      <div class="play">▶</div>
+      Start Learning
+    </button>
+
+    <!-- Quote card layout from second file + changing quote logic from first file -->
+    <div class="quote">
+      <div class="quote-emoji" id="quoteEmoji">🚀</div>
+
+      <div class="quote-content">
+        <div class="quote-text fade-in" id="quoteText">
+          One small step today, a giant leap tomorrow!
+        </div>
+
+        <div class="dots" id="quoteDots"></div>
+      </div>
+
+      <div class="quote-emoji" id="quoteEmojiRight">🚀</div>
+    </div>
+
+  </div>
+
+  <script>
     const API = 'http://localhost:5000/api';
 
-    function getToken() {
+    // ---- Quote rotation ----
+    const quotes = [
+      { text: "One small step today, a giant leap tomorrow!", icon: "🚀" },
+      { text: "Every day you're getting better. Keep going!", icon: "🌟" },
+      { text: "Small steps lead to big changes!", icon: "🌱" },
+      { text: "You're braver than you believe!", icon: "🦁" },
+      { text: "Mistakes mean you're trying. Keep going!", icon: "✨" },
+      { text: "Your kindness makes the world brighter!", icon: "☀️" }
+    ];
+
+    let quoteIndex = 0;
+    let quoteInterval;
+    const quoteText = document.getElementById('quoteText');
+    const quoteEmoji = document.getElementById('quoteEmoji');
+    const quoteEmojiRight = document.getElementById('quoteEmojiRight');
+    const dotsContainer = document.getElementById('quoteDots');
+
+    function buildDots(){
+      dotsContainer.innerHTML = '';
+      quotes.forEach((_, i) => {
+        const dot = document.createElement('div');
+        dot.className = 'dot' + (i === 0 ? ' active' : '');
+        dotsContainer.appendChild(dot);
+      });
+    }
+
+    function updateDots(index){
+      [...dotsContainer.children].forEach((dot, i) => {
+        dot.classList.toggle('active', i === index);
+      });
+    }
+
+    function rotateQuote(){
+      quoteText.classList.remove('fade-in');
+      quoteText.classList.add('fade-out');
+
+      setTimeout(() => {
+        quoteIndex = (quoteIndex + 1) % quotes.length;
+        const q = quotes[quoteIndex];
+        quoteText.textContent = q.text;
+        quoteEmoji.textContent = q.icon;
+        quoteEmojiRight.textContent = q.icon;
+        updateDots(quoteIndex);
+        quoteText.classList.remove('fade-out');
+        quoteText.classList.add('fade-in');
+      }, 600);
+    }
+
+    function startQuoteRotation(){
+      buildDots();
+      const q = quotes[0];
+      quoteText.textContent = q.text;
+      quoteEmoji.textContent = q.icon;
+      quoteEmojiRight.textContent = q.icon;
+      updateDots(0);
+      if (quoteInterval) clearInterval(quoteInterval);
+      quoteInterval = setInterval(rotateQuote, 10000);
+    }
+
+    // ---- Navigation ----
+    function getToken(){
       return localStorage.getItem('token');
     }
 
-    function goLogin() {
+    function goLogin(){
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       localStorage.removeItem('childProfileId');
-      window.location.href = "login.html";
+      document.body.style.transition = 'opacity 0.3s ease';
+      document.body.style.opacity = '0';
+      setTimeout(() => { window.location.href = 'login.html'; }, 300);
     }
 
-    function startLearning() {
-      document.body.style.transition = "opacity 0.3s ease";
-      document.body.style.opacity = "0";
+    function startLearning(){
+      document.body.style.transition = 'opacity 0.3s ease';
+      document.body.style.opacity = '0';
       setTimeout(() => {
-        window.location.href = "./moduleSelection/module_selection.html";
+        window.location.href = './moduleSelection/module_selection.html';
       }, 300);
     }
 
-    function goProfile() {
-      window.location.href = "child_profile.html";
+    function goProfile(){
+      window.location.href = 'child_profile.html';
     }
 
-    async function loadDashboard() {
+    // ---- Wire icon buttons ----
+    document.addEventListener('DOMContentLoaded', () => {
+      const btns = document.querySelectorAll('.right .icon-btn');
+      if (btns[0]) btns[0].onclick = goProfile;
+      if (btns[1]) btns[1].onclick = goLogin;
+    });
+
+    // ---- Load dashboard data ----
+    async function loadDashboard(){
       const token = getToken();
-      if (!token) {
-        goLogin();
-        return;
-      }
+      if (!token) { goLogin(); return; }
 
       try {
         const res = await fetch(`${API}/games/dashboard/me`, {
@@ -224,23 +671,39 @@
 
         const d = data.dashboard;
         localStorage.setItem('childProfileId', d.id);
-        document.getElementById('greeting').innerText = `Hello, ${d.childName}!`;
-        document.getElementById('starsCount').innerText = d.stars;
-        document.getElementById('progressPct').innerText = `${d.overallProgress}%`;
-        document.getElementById('totalCorrectDisplay').innerHTML = `✅ ${d.totalCorrect || 0} correct`;
-        document.getElementById('totalQuestionsDisplay').innerHTML = `📝 ${d.totalQuestions || 0} attempted`;
 
+        // Greeting
+        document.getElementById('greeting').innerHTML = `Hello, ${d.childName}! 👋`;
+
+        // Stars
+        const starEl = document.getElementById('starsCount');
+        starEl.textContent = d.stars;
+
+        // Progress
+        document.getElementById('progressPct').textContent = `${d.overallProgress}%`;
+        document.getElementById('correctCount').textContent = d.totalCorrect || 0;
+        document.getElementById('attemptCount').textContent = d.totalQuestions || 0;
+
+        // Animate progress bar
         const bar = document.getElementById('progressBar');
         bar.style.width = '0%';
-        setTimeout(() => { bar.style.width = `${d.overallProgress}%`; }, 400);
+        bar.style.animation = 'none';
+        setTimeout(() => {
+          bar.style.width = `${d.overallProgress}%`;
+          bar.style.animation = 'fillGrow 1.4s ease-out';
+        }, 200);
+
       } catch (error) {
         console.error('Dashboard load error:', error);
         alert('Could not load dashboard. Make sure the server is running.');
       }
     }
 
-    window.addEventListener('pageshow', loadDashboard);
-</script>
+    window.addEventListener('pageshow', () => {
+      loadDashboard();
+      startQuoteRotation();
+    });
+  </script>
 
 </body>
 </html>

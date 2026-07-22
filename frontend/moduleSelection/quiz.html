@@ -1,390 +1,1067 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Quiz</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
 
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500&display=swap" rel="stylesheet">
+      body {
+        margin: 0;
+        font-family: "Baloo 2", cursive;
+        background: radial-gradient(
+          circle,
+          #f5eaa0 0%,
+          #f5eab5 45%,
+          #f5edc5 100%
+        );
+        background-attachment: fixed;
+        overflow-x: hidden;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0.6rem;
+      }
 
-<style>
-body {
-  margin: 0;
-  font-family: 'Fredoka', sans-serif;
-  background: #eaf4f4;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+      .float-el {
+        position: fixed;
+        pointer-events: none;
+        opacity: 0.25;
+        z-index: 0;
+        animation: floatAnim 8s ease-in-out infinite;
+      }
+
+      .float-el:nth-child(1) {
+        top: 10%;
+        left: 5%;
+        font-size: 3rem;
+      }
+      .float-el:nth-child(2) {
+        top: 70%;
+        left: 8%;
+        font-size: 2.5rem;
+        animation-delay: 2s;
+      }
+      .float-el:nth-child(3) {
+        top: 20%;
+        right: 5%;
+        font-size: 2rem;
+        animation-delay: 4s;
+      }
+      .float-el:nth-child(4) {
+        top: 80%;
+        right: 10%;
+        font-size: 3.5rem;
+        animation-delay: 1s;
+      }
+      .float-el:nth-child(5) {
+        top: 50%;
+        left: 3%;
+        font-size: 1.8rem;
+        animation-delay: 3s;
+      }
+      .float-el:nth-child(6) {
+        top: 40%;
+        right: 3%;
+        font-size: 2.2rem;
+        animation-delay: 5s;
+      }
+      .float-el:nth-child(7) {
+        top: 5%;
+        right: 25%;
+        font-size: 2.8rem;
+        animation-delay: 1.5s;
+      }
+      .float-el:nth-child(8) {
+        top: 88%;
+        left: 30%;
+        font-size: 2.4rem;
+        animation-delay: 3.5s;
+      }
+
+      @keyframes floatAnim {
+        0%,
+        100% {
+          transform: translateY(0) rotate(0deg);
+        }
+        25% {
+          transform: translateY(-20px) rotate(5deg);
+        }
+        50% {
+          transform: translateY(-10px) rotate(-3deg);
+        }
+        75% {
+          transform: translateY(-25px) rotate(4deg);
+        }
+      }
+
+      .bg-dots {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0.08;
+        background-image: radial-gradient(circle, #ff8a65 1px, transparent 1px);
+        background-size: 30px 30px;
+      }
+
+      /* ============ Bear Character ============ */
+      .bear {
+        width: 90px;
+        height: 90px;
+        position: relative;
+        flex-shrink: 0;
+        animation: bearFloat 3s ease-in-out infinite;
+        transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .bear-body {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(145deg, #d4a373, #b8956a);
+        border-radius: 50%;
+        position: relative;
+        box-shadow:
+          0 8px 24px -6px rgba(180, 140, 100, 0.35),
+          inset 0 -4px 10px rgba(0, 0, 0, 0.08);
+        overflow: visible;
+      }
+      .bear-ear {
+        position: absolute;
+        width: 28px;
+        height: 28px;
+        background: linear-gradient(145deg, #d4a373, #b8956a);
+        border-radius: 50%;
+        top: -10px;
+        z-index: -1;
+      }
+      .bear-ear.left {
+        left: 4px;
+      }
+      .bear-ear.right {
+        right: 4px;
+      }
+      .bear-ear-inner {
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        background: #e8c9a0;
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      .bear-eye {
+        position: absolute;
+        width: 24px;
+        height: 26px;
+        background: #3d2b1f;
+        border-radius: 50%;
+        top: 22px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      }
+      .bear-eye.left {
+        left: 13px;
+      }
+      .bear-eye.right {
+        right: 13px;
+      }
+      .bear-eye-shine {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: white;
+        border-radius: 50%;
+        top: 4px;
+        right: 5px;
+      }
+      .bear-eye-shine-sm {
+        position: absolute;
+        width: 5px;
+        height: 5px;
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 50%;
+        bottom: 5px;
+        left: 6px;
+      }
+      .bear-nose {
+        position: absolute;
+        width: 14px;
+        height: 9px;
+        background: #3d2b1f;
+        border-radius: 40%;
+        top: 44px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      .bear-smile {
+        position: absolute;
+        width: 20px;
+        height: 10px;
+        border-bottom: 3px solid rgba(61, 43, 31, 0.4);
+        border-radius: 0 0 50% 50%;
+        bottom: 15px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      .bear-cheek {
+        position: absolute;
+        width: 14px;
+        height: 9px;
+        background: rgba(255, 150, 130, 0.3);
+        border-radius: 50%;
+        top: 40px;
+      }
+      .bear-cheek.left {
+        left: 2px;
+      }
+      .bear-cheek.right {
+        right: 2px;
+      }
+      .bear-arm {
+        position: absolute;
+        width: 12px;
+        height: 26px;
+        background: linear-gradient(145deg, #d4a373, #b8956a);
+        border-radius: 9999px;
+        top: 14px;
+        transform-origin: top center;
+        animation: bearWave 2.8s ease-in-out infinite;
+      }
+      .bear-arm.left {
+        left: -14px;
+      }
+      .bear-arm.right {
+        right: -14px;
+        animation-delay: 0.4s;
+      }
+      .bear-foot {
+        position: absolute;
+        width: 20px;
+        height: 12px;
+        background: linear-gradient(145deg, #d4a373, #b8956a);
+        border-radius: 50%;
+        bottom: -6px;
+        z-index: -2;
+      }
+      .bear-foot.left {
+        left: 10px;
+      }
+      .bear-foot.right {
+        right: 10px;
+      }
+
+      @keyframes bearFloat {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+      @keyframes bearWave {
+        0%,
+        100% {
+          transform: rotate(-12deg);
+        }
+        25% {
+          transform: rotate(-28deg);
+        }
+        50% {
+          transform: rotate(-12deg);
+        }
+        75% {
+          transform: rotate(-22deg);
+        }
+      }
+
+      /* ---- Container ---- */
+      .container {
+        width: 100%;
+        max-width: 900px;
+        background: white;
+        border-radius: 34px;
+        padding: 24px 40px;
+        position: relative;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+      }
+
+      /* ---- Back button ---- */
+      .back-btn {
+        position: fixed;
+        top: 24px;
+        left: 24px;
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        border: none;
+        background: white;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        font-size: 20px;
+        transition: all 0.25s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ff8a65;
+        z-index: 10;
+      }
+      .back-btn:hover {
+        transform: scale(1.12);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+      }
+
+      .question-area {
+        margin-top: 14px;
+      }
+
+      .question-text {
+        background: #dff5ff;
+
+        border: 2px solid #99e0ff;
+
+        border-radius: 20px;
+
+        padding: 16px 24px;
+
+        text-align: center;
+
+        font-size: 1.5rem;
+
+        font-weight: 800;
+
+        color: #1d3155;
+
+        line-height: 1.4;
+      }
+      /* ---- Image ---- */
+     .question-img{
+
+width:100%;
+
+max-height:300px;
+
+object-fit:contain;
+
+background:#f0f4f8;
+
+border-radius:20px;
+
+display:block;
+
+margin-bottom:14px;
+
 }
 
-.container {
-  width: 90%;
-  max-width: 650px;
-  background: #ffffff;
-  padding: 25px;
-  border-radius: 20px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-  text-align: center;
-  border: 1px solid #eaf4f4;
+      /* ---- Voice buttons ---- */
+      .voice-row {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        margin-top: 14px;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+      }
+     .voice-btn{
+
+flex:1;
+
+padding:13px 16px;
+
+background:white;
+
+border:2px solid #FFD7C8;
+
+border-radius:40px;
+
+font-size:16px;
+
+font-weight:700;
+
+color:#203050;
+
+transition:.3s;
+
 }
+      .voice-btn:hover {
+        background: rgba(255, 138, 101, 0.18);
+        transform: scale(1.05);
+      }
 
-h2 {
-  color: #2c3e50;
-  background: #ffffff;
-  padding: 18px;
-  border-radius: 16px;
-  border: 2px solid #eaf4f4;
-  margin-bottom: 15px;
+      /* ---- Options ---- */
+     .option{
+
+background:white;
+
+padding:13px 18px;
+
+margin:12px 0;
+
+border-radius:16px;
+
+border:2px solid #CBEFC8;
+
+font-size:20px;
+
+font-weight:600;
+
+text-align:center;
+
+transition:.25s;
+
 }
+      .option:hover{
 
-.option {
-  display: block;
-  background: #ffffff;
-  padding: 14px;
-  margin: 10px 0;
-  border-radius: 14px;
-  cursor: pointer;
-  transition: 0.2s;
-  border: 2px solid #f0f7f7;
+background:#F9FFF9;
+
+transform:translateY(-3px);
+
 }
+      .option:active {
+        transform: scale(0.98);
+      }
+      .option.selected {
+        background: rgba(255, 138, 101, 0.1);
+        border-color: #ff8a65;
+      }
+      .option.correct {
+        background: #d4edda !important;
+        border-color: #81c784 !important;
+      }
+      .option.wrong {
+        background: #f8d7da !important;
+        border-color: #ff8a65 !important;
+      }
 
-.option:hover {
-  background: #f5fbfb;
-  transform: scale(1.01);
+      /* ---- Feedback ---- */
+      #feedback {
+        margin-top: 14px;
+        text-align: center;
+        font-weight: 600;
+        font-size: 1.05rem;
+        min-height: 2rem;
+        animation: pop 0.3s ease;
+      }
+
+      /* ---- Next button ---- */
+      #nextBtn {
+        display: none;
+        width: 100%;
+        padding: 14px;
+        margin-top: 16px;
+        border: none;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #A7D79C, #81C784);
+        color: white;
+        font-family: "Fredoka", sans-serif;
+        font-size: 1.15rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 18px -6px rgba(129, 199, 132, 0.4);
+        letter-spacing: 0.5px;
+      }
+      #nextBtn:hover {
+        transform: scale(1.02);
+        box-shadow: 0 10px 28px -8px rgba(129, 199, 132, 0.5);
+      }
+      #nextBtn:active {
+        transform: scale(0.97);
+      }
+
+      /* ---- Result screen ---- */
+      #resultScreen {
+        display: none;
+        margin-top: 8px;
+      }
+
+      .rewardBox {
+        background: rgba(255, 255, 255, 0.95);
+        border: 2px solid rgba(255, 138, 101, 0.15);
+        padding: 2rem;
+        border-radius: 1.6rem;
+        animation: pop 0.45s ease;
+      }
+      .rewardBox h2 {
+        color: #ff8a65;
+        margin-top: 0;
+        font-size: 1.8rem;
+      }
+      .rewardBox p {
+        color: #1a1a2e;
+        font-size: 1.1rem;
+        margin: 0.7rem 0;
+      }
+
+      /* ---- Animations ---- */
+      @keyframes pop {
+        from {
+          transform: scale(0.85);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      /* ============ Responsive ============ */
+      @media (max-width: 640px) {
+        body {
+          padding: 0.5rem;
+        }
+        .container {
+          padding: 1.2rem 1rem;
+          border-radius: 1.4rem;
+        }
+
+        .bear {
+          width: 60px;
+          height: 60px;
+        }
+        .bear-ear {
+          width: 20px;
+          height: 20px;
+          top: -7px;
+        }
+        .bear-ear.left {
+          left: 2px;
+        }
+        .bear-ear.right {
+          right: 2px;
+        }
+        .bear-ear-inner {
+          width: 11px;
+          height: 11px;
+        }
+        .bear-eye {
+          width: 16px;
+          height: 17px;
+          top: 14px;
+        }
+        .bear-eye.left {
+          left: 9px;
+        }
+        .bear-eye.right {
+          right: 9px;
+        }
+        .bear-eye-shine {
+          width: 7px;
+          height: 7px;
+          top: 3px;
+          right: 3px;
+        }
+        .bear-eye-shine-sm {
+          width: 3px;
+          height: 3px;
+          bottom: 3px;
+          left: 4px;
+        }
+        .bear-nose {
+          width: 9px;
+          height: 6px;
+          top: 30px;
+        }
+        .bear-smile {
+          width: 14px;
+          height: 7px;
+          border-bottom-width: 2px;
+          bottom: 10px;
+        }
+        .bear-cheek {
+          width: 9px;
+          height: 6px;
+          top: 27px;
+        }
+        .bear-cheek.left {
+          left: 1px;
+        }
+        .bear-cheek.right {
+          right: 1px;
+        }
+        .bear-arm {
+          width: 8px;
+          height: 18px;
+          top: 9px;
+        }
+        .bear-arm.left {
+          left: -9px;
+        }
+        .bear-arm.right {
+          right: -9px;
+        }
+        .bear-foot {
+          width: 14px;
+          height: 8px;
+          bottom: -4px;
+        }
+        .bear-foot.left {
+          left: 7px;
+        }
+        .bear-foot.right {
+          right: 7px;
+        }
+
+        .question-area {
+          gap: 0.7rem;
+        }
+        .question-text {
+          font-size: 0.95rem;
+          padding: 0.7rem 0.9rem;
+        }
+        .option {
+          font-size: 0.9rem;
+          padding: 12px 14px;
+          margin: 8px 0;
+        }
+        .voice-btn {
+          font-size: 0.78rem;
+          padding: 5px 13px;
+        }
+       .back-btn{
+
+position:fixed;
+
+top:20px;
+
+left:20px;
+
+width:52px;
+
+height:52px;
+
+border-radius:50%;
+
+background:white;
+
+box-shadow:0 4px 12px rgba(0,0,0,.15);
+
+font-size:22px;
+
 }
+        .rewardBox {
+          padding: 1.3rem;
+        }
+        .rewardBox h2 {
+          font-size: 1.4rem;
+        }
+      }
 
-.selected {
-  background: #eaf4f4;
-  border: 2px solid #b2dfdb;
-}
+      @media (max-width: 400px) {
+        .container {
+          padding: 1rem 0.8rem;
+        }
+        .bear {
+          width: 48px;
+          height: 48px;
+        }
+        .bear-ear {
+          width: 16px;
+          height: 16px;
+          top: -5px;
+        }
+        .bear-ear.left {
+          left: 1px;
+        }
+        .bear-ear.right {
+          right: 1px;
+        }
+        .bear-ear-inner {
+          width: 9px;
+          height: 9px;
+        }
+        .bear-eye {
+          width: 13px;
+          height: 14px;
+          top: 11px;
+        }
+        .bear-eye.left {
+          left: 7px;
+        }
+        .bear-eye.right {
+          right: 7px;
+        }
+        .bear-eye-shine {
+          width: 5px;
+          height: 5px;
+          top: 2px;
+          right: 2px;
+        }
+        .bear-eye-shine-sm {
+          width: 2px;
+          height: 2px;
+          bottom: 2px;
+          left: 3px;
+        }
+        .bear-nose {
+          width: 7px;
+          height: 5px;
+          top: 24px;
+        }
+        .bear-smile {
+          display: none;
+        }
+        .bear-cheek {
+          width: 7px;
+          height: 5px;
+          top: 22px;
+        }
+        .bear-arm {
+          display: none;
+        }
+        .bear-foot {
+          width: 12px;
+          height: 6px;
+          bottom: -3px;
+        }
+        .question-text {
+          font-size: 0.85rem;
+          padding: 0.6rem 0.7rem;
+        }
+        .option {
+          font-size: 0.82rem;
+          padding: 10px 11px;
+          margin: 6px 0;
+        }
+      }
 
-.correct {
-  background: #d4edda !important;
-  border: 2px solid #28a745 !important;
-}
+      .pig-wrap{
+        position:absolute;
+        right:-340px;
+        bottom:30px;
+        z-index:2;
+        pointer-events:none;
+        line-height:0;
+      }
+      .pig-wrap img{
+        width:380px;
+        animation:floatPig 2.4s ease-in-out infinite;
+      }
 
-.wrong {
-  background: #f8d7da !important;
-  border: 2px solid #dc3545 !important;
-}
+      @keyframes floatPig{
+        0%{ transform:translateY(0); }
+        50%{ transform:translateY(-18px); }
+        100%{ transform:translateY(0); }
+      }
+    </style>
+  </head>
 
-button {
-  width: 100%;
-  padding: 12px;
-  margin-top: 12px;
-  border: none;
-  border-radius: 14px;
-  cursor: pointer;
-  font-size: 15px;
-  font-weight: bold;
-}
+  <body>
+    <div class="float-el">🌟</div>
+    <div class="float-el">⭐</div>
+    <div class="float-el">🌻</div>
+    <div class="float-el">🌈</div>
+    <div class="float-el">✨</div>
+    <div class="float-el">🌼</div>
+    <div class="float-el">☀️</div>
+    <div class="float-el">💛</div>
+    <div class="bg-dots"></div>
 
-#nextBtn {
-  background: #c8e6c9;
-  color: #2e4a3d;
-}
+    <button class="back-btn" onclick="goBack()">←</button>
 
-#resultScreen {
-  display: none;
-}
+    <div class="container">
 
-.correctBox {
-  background: #dff5e1;
-  border: 2px solid #a9dfbf;
-  padding: 25px;
-  border-radius: 18px;
-  animation: pop 0.3s ease, bounce 0.5s ease;
-}
+      <div id="quizScreen">
+        <!-- Image -->
+        <img id="questionImage" class="question-img" alt="Scenario image" />
 
-.wrongBox {
-  background: #fdecea;
-  border: 2px solid #f5b7b1;
-  padding: 25px;
-  border-radius: 18px;
-  animation: pop 0.3s ease, shake 0.4s ease;
-}
+        <!-- Bear + Question side by side -->
+        <div class="question-area">
+          <div class="question-text" id="question">Loading...</div>
+        </div>
 
-.rewardBox {
-  background: #fff8dc;
-  border: 2px solid #f9e79f;
-  padding: 25px;
-  border-radius: 18px;
-  animation: pop 0.3s ease;
-}
+        <!-- Voice buttons -->
+        <div class="voice-row">
+          <button class="voice-btn" onclick="repeatQuestion()">
+            🔊 Repeat
+          </button>
+          <button class="voice-btn" onclick="readOptions()">
+            🔊 Read Options
+          </button>
+        </div>
 
-@keyframes pop {
-  from { transform: scale(0.85); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
+        <!-- Options -->
+        <div id="options"></div>
 
-@keyframes bounce {
-  0% { transform: scale(0.95); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
+        <!-- Feedback -->
+        <div id="feedback"></div>
 
-@keyframes shake {
-  0% { transform: translateX(0); }
-  25% { transform: translateX(-6px); }
-  50% { transform: translateX(6px); }
-  75% { transform: translateX(-4px); }
-  100% { transform: translateX(0); }
-}
-</style>
-</head>
+        <!-- Next -->
+        <button id="nextBtn" onclick="nextQuestion()">NEXT ➜</button>
+      </div>
 
-<body>
-
-<div style="position:absolute; top:20px; left:20px;">
-  <button onclick="goBack()" style="
-    width: 45px; height: 45px; border-radius: 12px; border: none;
-    background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    cursor: pointer; font-size: 18px;
-  ">←</button>
-</div>
-
-<div class="container">
-
-  <div id="quizScreen">
-    <img id="questionImage" style="display:none; max-width:100%; width:auto; height:auto; max-height:220px; border-radius:12px; margin:0 auto 10px auto; object-fit:contain;" alt="Scenario image">
-    <h2 id="question">Loading...</h2>
-    <div style="display:flex; gap:8px; justify-content:center; margin-bottom:8px;">
-      <button onclick="repeatQuestion()" style="background:none; border:1px solid #ddd; border-radius:10px; padding:6px 14px; font-size:14px; cursor:pointer;">🔊 Repeat</button>
-      <button onclick="readOptions()" style="background:none; border:1px solid #ddd; border-radius:10px; padding:6px 14px; font-size:14px; cursor:pointer;">🔊 Read Options</button>
+      <!-- Result -->
+      <div id="resultScreen">
+        <div id="resultBox" class="rewardBox"></div>
+      </div>
+      <div class="pig-wrap"><img src="/frontend/images/stitch.png" class="pig"></div>
     </div>
-    <div id="options"></div>
-    <div id="feedback" style="margin-top:12px; text-align:center; font-weight:bold; font-size:16px;"></div>
-    <button id="nextBtn" onclick="nextQuestion()" style="display:none; width:100%; padding:14px; border:none; border-radius:14px; background:#a9dfbf; cursor:pointer; font-size:16px;">NEXT ➜</button>
-  </div>
 
-  <div id="resultScreen">
-    <div id="resultBox"></div>
-  </div>
+    <script src="questions.js"></script>
+    <script>
+      const API = "http://localhost:5000/api";
+      const token = localStorage.getItem("token");
 
-</div>
+      const params = new URLSearchParams(window.location.search);
+      const module = params.get("module");
+      const level = params.get("level");
 
-<script src="questions.js"></script>
-<script>
-const API = 'http://localhost:5000/api';
-const token = localStorage.getItem('token');
+      let questions = [];
+      let index = 0;
+      let selected = null;
+      let answered = false;
+      let score = 0;
 
-const params = new URLSearchParams(window.location.search);
-const module = params.get('module');
-const level = params.get('level');
+      // ---- Character reactions ----
+      function bearReact(correct) {
+        const c = document.getElementById("bearChar");
+        if (!c) return;
+        if (correct) {
+          c.style.transform = "scale(1.18) rotate(-5deg)";
+          setTimeout(() => {
+            c.style.transform = "";
+          }, 550);
+        } else {
+          c.style.transform = "translateX(-8px)";
+          setTimeout(() => {
+            c.style.transform = "translateX(6px)";
+          }, 120);
+          setTimeout(() => {
+            c.style.transform = "";
+          }, 260);
+        }
+      }
 
-let questions = [];
-let index = 0;
-let selected = null;
-let answered = false;
-let score = 0;
+      // ---- Load questions ----
+      async function loadQuestions() {
+        if (!token || !module || !level) {
+          document.getElementById("question").innerText =
+            "Missing module or level";
+          return;
+        }
+        try {
+          const res = await fetch(`${API}/games/module/${module}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const data = await res.json();
+          if (!data.success) {
+            document.getElementById("question").innerText =
+              "Failed to load questions";
+            return;
+          }
+        } catch (_) {}
 
-// ---- Load questions from backend (without answers) ----
-async function loadQuestions() {
-  if (!token || !module || !level) {
-    document.getElementById('question').innerText = 'Missing module or level';
-    return;
-  }
-  try {
-    const res = await fetch(`${API}/games/module/${module}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    const data = await res.json();
-    if (!data.success) {
-      document.getElementById('question').innerText = 'Failed to load questions';
-      return;
-    }
-  } catch (_) {}
+        if (
+          typeof questionBank !== "undefined" &&
+          questionBank[module]?.[level]
+        ) {
+          questions = questionBank[module][level];
+        } else {
+          document.getElementById("question").innerText =
+            "Questions not available";
+          return;
+        }
+        loadQuestion();
+      }
 
-  // Questions are hardcoded on frontend for speed; answers validated by backend
-  if (typeof questionBank !== 'undefined' && questionBank[module]?.[level]) {
-    questions = questionBank[module][level];
-  } else {
-    document.getElementById('question').innerText = 'Questions not available';
-    return;
-  }
-  loadQuestion();
-}
+      function repeatQuestion() {
+        const q = questions[index];
+        if (q && window.speechSynthesis) {
+          speechSynthesis.cancel();
+          const u = new SpeechSynthesisUtterance(q.q);
+          u.rate = 0.9;
+          u.pitch = 1.1;
+          speechSynthesis.speak(u);
+        }
+      }
 
-function repeatQuestion() {
-  const q = questions[index];
-  if (q && window.speechSynthesis) {
-    const utterance = new SpeechSynthesisUtterance(q.q);
-    utterance.rate = 0.9;
-    utterance.pitch = 1.1;
-    speechSynthesis.cancel();
-    speechSynthesis.speak(utterance);
-  }
-}
+      function readOptions() {
+        const q = questions[index];
+        if (!q || !window.speechSynthesis) return;
+        speechSynthesis.cancel();
+        q.options.forEach((opt, i) => {
+          const u = new SpeechSynthesisUtterance(`Option ${i + 1}: ${opt}`);
+          u.rate = 0.9;
+          u.pitch = 1.1;
+          setTimeout(() => speechSynthesis.speak(u), i * 2500);
+        });
+      }
 
-function readOptions() {
-  const q = questions[index];
-  if (!q || !window.speechSynthesis) return;
-  speechSynthesis.cancel();
-  q.options.forEach((opt, i) => {
-    const utterance = new SpeechSynthesisUtterance(`Option ${i + 1}: ${opt}`);
-    utterance.rate = 0.9;
-    utterance.pitch = 1.1;
-    setTimeout(() => speechSynthesis.speak(utterance), i * 2500);
-  });
-}
+      function loadQuestion() {
+        selected = null;
+        answered = false;
+        document.getElementById("quizScreen").style.display = "block";
+        document.getElementById("resultScreen").style.display = "none";
+        document.getElementById("nextBtn").style.display = "none";
+        document.getElementById("feedback").innerHTML = "";
 
-function loadQuestion() {
-  selected = null;
-  answered = false;
-  document.getElementById('quizScreen').style.display = 'block';
-  document.getElementById('resultScreen').style.display = 'none';
-  document.getElementById('nextBtn').style.display = 'none';
-  document.getElementById('feedback').innerText = '';
+        const c = document.getElementById("bearChar");
+        if (c) c.style.transform = "";
 
-  const q = questions[index];
-  const imgEl = document.getElementById('questionImage');
-  if (q.image) {
-    imgEl.style.display = 'block';
-    imgEl.src = q.image;
-  } else {
-    imgEl.style.display = 'none';
-    imgEl.src = '';
-  }
-  document.getElementById('question').innerText = `Q${index + 1}. ${q.q}`;
+        const q = questions[index];
+        const imgEl = document.getElementById("questionImage");
+        if (q.image) {
+          imgEl.style.display = "block";
+          imgEl.src = q.image;
+        } else {
+          imgEl.style.display = "none";
+          imgEl.src = "";
+        }
 
-  const optionsDiv = document.getElementById('options');
-  optionsDiv.innerHTML = '';
+        document.getElementById("question").innerText = `Q${index + 1}. ${q.q}`;
 
-  q.options.forEach((opt, i) => {
-    const div = document.createElement('div');
-    div.classList.add('option');
-    div.innerText = opt;
-    div.onclick = () => handleOptionClick(div, i);
-    optionsDiv.appendChild(div);
-  });
+        const optionsDiv = document.getElementById("options");
+        optionsDiv.innerHTML = "";
 
-  repeatQuestion();
-}
+        q.options.forEach((opt, i) => {
+          const div = document.createElement("div");
+          div.classList.add("option");
+          div.innerText = `${String.fromCharCode(65 + i)}. ${opt}`;
+          div.onclick = () => handleOptionClick(div, i);
+          optionsDiv.appendChild(div);
+        });
 
-// ---- On click: validate immediately, disable, show correct answer + Next ----
-async function handleOptionClick(div, selectedIndex) {
-  if (answered) return;
-  answered = true;
-  selected = selectedIndex;
+        repeatQuestion();
+      }
 
-  const allOptions = document.querySelectorAll('.option');
-  allOptions.forEach(o => { o.style.pointerEvents = 'none'; o.classList.remove('selected'); });
-  div.classList.add('selected');
+      async function handleOptionClick(div, selectedIndex) {
+        if (answered) return;
+        answered = true;
+        selected = selectedIndex;
 
-  try {
-    const res = await fetch(`${API}/games/check-answer`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ module, level, questionIndex: index, userAnswer: selected }),
-    });
-    const data = await res.json();
-    if (!data.success) throw new Error(data.message);
+        const allOptions = document.querySelectorAll(".option");
+        allOptions.forEach((o) => {
+          o.style.pointerEvents = "none";
+          o.classList.remove("selected");
+        });
+        div.classList.add("selected");
 
-    const correctIndex = questions[index].correct;
-    const feedbackEl = document.getElementById('feedback');
+        try {
+          const res = await fetch(`${API}/games/check-answer`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              module,
+              level,
+              questionIndex: index,
+              userAnswer: selected,
+            }),
+          });
+          const data = await res.json();
+          if (!data.success) throw new Error(data.message);
 
-    if (data.correct) {
-      score++;
-      div.classList.add('correct');
-      feedbackEl.innerHTML = '✅ <span style="color:#28a745;">Correct! Great job!</span>';
-    } else {
-      div.classList.add('wrong');
-      allOptions[correctIndex].classList.add('correct');
-      feedbackEl.innerHTML = `❌ <span style="color:#dc3545;">Incorrect.</span> Correct answer: <strong>${questions[index].options[correctIndex]}</strong>`;
-    }
+          const correctIndex = questions[index].correct;
+          const feedbackEl = document.getElementById("feedback");
 
-    document.getElementById('nextBtn').style.display = 'block';
-  } catch (err) {
-    console.error('Check answer error:', err);
-    alert('Error checking answer');
-    answered = false;
-  }
-}
+          if (data.correct) {
+            score++;
+            div.classList.add("correct");
+            feedbackEl.innerHTML =
+              '✅ <span style="color:#28a745;">Correct! Great job!</span>';
+            bearReact(true);
+          } else {
+            div.classList.add("wrong");
+            allOptions[correctIndex].classList.add("correct");
+            feedbackEl.innerHTML = `❌ <span style="color:#dc3545;">Incorrect.</span> Correct: <strong>${questions[index].options[correctIndex]}</strong>`;
+            bearReact(false);
+          }
 
-// ---- Save results to backend ----
-async function saveQuizToBackend() {
-  const childId = await getChildProfileId();
-  if (!childId || !token) {
-    console.error('Cannot save: missing childId or token');
-    return null;
-  }
-  try {
-    const res = await fetch(`${API}/games`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        child: childId, module, level, score, total: questions.length, completed: true,
-      }),
-    });
-    return await res.json();
-  } catch (err) {
-    console.error('Save failed:', err);
-    return null;
-  }
-}
+          document.getElementById("nextBtn").style.display = "block";
+        } catch (err) {
+          console.error(err);
+          alert("Error checking answer");
+          answered = false;
+        }
+      }
 
-// ---- Algorithm 3: Show rewards on quiz end ----
-async function saveAndShowRewards() {
-  const data = await saveQuizToBackend();
-  if (!data?.success) {
-    console.warn('Quiz result may not have saved');
-  }
+      async function saveQuizToBackend() {
+        const childId = await getChildProfileId();
+        if (!childId || !token) return null;
+        try {
+          const res = await fetch(`${API}/games`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              child: childId,
+              module,
+              level,
+              score,
+              total: questions.length,
+              completed: true,
+            }),
+          });
+          return await res.json();
+        } catch (_) {
+          return null;
+        }
+      }
 
-  const reward = data?.reward || { stars: 0, badge: 'None' };
-  const badgeEmoji = { Gold: '🥇', Silver: '🥈', Bronze: '🥉', None: '' };
-  const badgeText = reward.badge !== 'None' ? `<p>🏅 Badge: ${badgeEmoji[reward.badge]} ${reward.badge}</p>` : '';
+      async function saveAndShowRewards() {
+        const data = await saveQuizToBackend();
+        if (!data?.success) console.warn("Quiz result may not have saved");
 
-  document.getElementById('resultBox').innerHTML = `
-    <div class="rewardBox">
-      <h2>🎉 Quiz Finished!</h2>
-      <p>Your Score: ${score} / ${questions.length}</p>
-      <p>⭐ Stars Earned: ${reward.stars > 0 ? '⭐'.repeat(reward.stars) : 'None'}</p>
-      ${badgeText}
-      <p>Great job! 🌟</p>
-    </div>
+        const reward = data?.reward || { stars: 0, badge: "None" };
+        const badgeEmoji = { Gold: "🥇", Silver: "🥈", Bronze: "🥉", None: "" };
+        const badgeText =
+          reward.badge !== "None"
+            ? `<p>🏅 Badge: ${badgeEmoji[reward.badge]} ${reward.badge}</p>`
+            : "";
+
+        document.getElementById("resultBox").innerHTML = `
+    <h2>🎉 Quiz Finished!</h2>
+    <p>Your Score: ${score} / ${questions.length}</p>
+    <p>⭐ Stars Earned: ${reward.stars > 0 ? "⭐".repeat(reward.stars) : "None"}</p>
+    ${badgeText}
+    <p style="margin-top:1rem;">Great job! 🌟</p>
   `;
-}
+      }
 
-function nextQuestion() {
-  index++;
-  if (index < questions.length) {
-    loadQuestion();
-  } else {
-    document.getElementById('quizScreen').style.display = 'none';
-    document.getElementById('resultScreen').style.display = 'block';
-    saveAndShowRewards();
-  }
-}
+      function nextQuestion() {
+        index++;
+        if (index < questions.length) {
+          loadQuestion();
+        } else {
+          document.getElementById("quizScreen").style.display = "none";
+          document.getElementById("resultScreen").style.display = "block";
+          saveAndShowRewards();
+        }
+      }
 
-async function getChildProfileId() {
-  let id = localStorage.getItem('childProfileId');
-  if (id) return id;
-  if (!token) return null;
-  try {
-    const res = await fetch(`${API}/games/dashboard/me`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    const data = await res.json();
-    if (data.success) {
-      localStorage.setItem('childProfileId', data.dashboard.id);
-      return data.dashboard.id;
-    }
-  } catch (_) {}
-  return null;
-}
+      async function getChildProfileId() {
+        let id = localStorage.getItem("childProfileId");
+        if (id) return id;
+        if (!token) return null;
+        try {
+          const res = await fetch(`${API}/games/dashboard/me`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const data = await res.json();
+          if (data.success) {
+            localStorage.setItem("childProfileId", data.dashboard.id);
+            return data.dashboard.id;
+          }
+        } catch (_) {}
+        return null;
+      }
 
-function goBack() {
-  window.location.href = `level.html?module=${module}`;
-}
+      function goBack() {
+        window.location.href = `level.html?module=${module}`;
+      }
 
-loadQuestions();
-</script>
-
-</body>
+      loadQuestions();
+    </script>
 </html>

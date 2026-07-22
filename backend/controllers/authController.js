@@ -1,134 +1,78 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 import User from '../models/User.js';
 import ChildProfile from '../models/ChildProfile.js';
-import { sendOtpSms } from '../config/sms.js';
+import { sendResetEmail } from '../config/email.js';
 
-const normalizePhone = (p) => (p || '').replace(/\D/g, '');
-
-// ---- SEND OTP ----
-export const sendOtp = async (req, res) => {
+// ---- FORGOT PASSWORD (sends email with reset link) ----
+export const forgotPassword = async (req, res) => {
   try {
-    const phone = normalizePhone(req.body.phone);
+    const { email } = req.body;
 
-    if (!phone) {
-      return res.status(400).json({ success: false, message: 'Phone number is required' });
+    if (!email) {
+      return res.status(400).json({ success: false, message: 'Email is required' });
     }
 
-    const user = await User.findOne({ phone });
+    const user = await User.findOne({ email });
     if (!user) {
-      // Fallback: maybe the user registered before phone field was added
-      const legacyUser = await User.findOne({ email: req.body.phone });
-      if (legacyUser) {
-        legacyUser.phone = phone;
-        await legacyUser.save();
-        return await sendOtpForUser(legacyUser, phone, res);
-      }
       return res.status(200).json({
         success: true,
-        message: 'If an account exists with that number, an OTP has been sent.',
+        message: 'If an account exists with that email, a reset link has been sent.',
       });
     }
 
-    return await sendOtpForUser(user, phone, res);
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
+    const resetToken = crypto.randomBytes(20).toString('hex');
+    user.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+    user.resetPasswordExpire = Date.now() + 3600000; // 1 hour
+    await user.save({ validateBeforeSave: false });
 
-async function sendOtpForUser(user, phone, res) {
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
-  user.otp = otp;
-  user.otpExpire = Date.now() + 600000; // 10 minutes
-  await user.save({ validateBeforeSave: false });
+    const resetLink = `http://localhost:5000/reset_password.html?token=${resetToken}`;
 
-  const result = await sendOtpSms(phone, otp);
-
-  if (result?.devMode) {
-    return res.status(200).json({
-      success: true,
-      message: 'OTP sent (dev mode — see below).',
-      otp: result.otp,
-    });
-  }
-
-  res.status(200).json({
-    success: true,
-    message: 'OTP sent to your phone.',
-  });
-}
-
-// ---- VERIFY OTP ----
-export const verifyOtp = async (req, res) => {
-  try {
-    const phone = normalizePhone(req.body.phone);
-    const { otp } = req.body;
-
-    if (!phone || !otp) {
-      return res.status(400).json({ success: false, message: 'Phone and OTP are required' });
+    // Attempt to send email; log link regardless for dev
+    try {
+      await sendResetEmail(user.email, resetLink);
+    } catch (emailErr) {
+      console.error('Email send failed:', emailErr.message);
     }
 
-    const user = await User.findOne({
-      phone,
-      otp,
-      otpExpire: { $gt: Date.now() },
-    });
-
-    if (!user) {
-      return res.status(400).json({ success: false, message: 'Invalid or expired OTP' });
-    }
-
-    // Issue a short-lived temp token for password reset
-    const tempToken = jwt.sign(
-      { phone: user.phone, purpose: 'reset' },
-      process.env.JWT_SECRET,
-      { expiresIn: '10m' },
-    );
+    console.log(`Reset link for ${email}: ${resetLink}`);
 
     res.status(200).json({
       success: true,
-      message: 'OTP verified successfully',
-      tempToken,
+      message: 'If an account exists with that email, a reset link has been sent.',
+      resetLink,
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// ---- RESET PASSWORD (after OTP verification) ----
-export const resetPasswordWithOtp = async (req, res) => {
+// ---- RESET PASSWORD (via email token) ----
+export const resetPassword = async (req, res) => {
   try {
-    const { tempToken, password } = req.body;
+    const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
 
-    if (!tempToken || !password) {
-      return res.status(400).json({ success: false, message: 'Token and password are required' });
-    }
+    const user = await User.findOne({
+      resetPasswordToken: hashedToken,
+      resetPasswordExpire: { $gt: Date.now() },
+    });
 
-    let decoded;
-    try {
-      decoded = jwt.verify(tempToken, process.env.JWT_SECRET);
-    } catch (_) {
-      return res.status(400).json({ success: false, message: 'Invalid or expired token. Please verify OTP again.' });
-    }
-
-    if (decoded.purpose !== 'reset') {
-      return res.status(400).json({ success: false, message: 'Invalid token purpose' });
-    }
-
-    const user = await User.findOne({ phone: decoded.phone });
     if (!user) {
-      return res.status(400).json({ success: false, message: 'User not found' });
+      return res.status(400).json({ success: false, message: 'Invalid or expired token' });
+    }
+
+    const { password } = req.body;
+    if (!password) {
+      return res.status(400).json({ success: false, message: 'Password is required' });
     }
 
     user.password = await bcrypt.hash(password, 10);
-    user.otp = undefined;
-    user.otpExpire = undefined;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
     await user.save();
 
-    res.status(200).json({
-      success: true,
-      message: 'Password reset successful',
-    });
+    res.status(200).json({ success: true, message: 'Password reset successful' });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -137,15 +81,10 @@ export const resetPasswordWithOtp = async (req, res) => {
 // ---- REGISTER USER ----
 export const registerUser = async (req, res) => {
   try {
-    const { childName, username, email } = req.body;
-    const phone = normalizePhone(req.body.phone);
-    const { password } = req.body;
+    const { childName, username, email, phone, password } = req.body;
 
     if (!childName || !username || !password) {
-      return res.status(400).json({
-        success: false,
-        message: 'Child name, username, and password are required',
-      });
+      return res.status(400).json({ success: false, message: 'Child name, username, and password are required' });
     }
 
     const existingUser = await User.findOne({ username });
@@ -155,13 +94,7 @@ export const registerUser = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await User.create({
-      childName,
-      username,
-      email,
-      phone,
-      password: hashedPassword,
-    });
+    const user = await User.create({ childName, username, email, phone, password: hashedPassword });
 
     await ChildProfile.create({
       childName,

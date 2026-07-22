@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    />
+
+    <title>Social Steps</title>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400..700;1,400..700&display=swap"
+        rel="stylesheet"
+    />
+
+    <!-- Material Symbols -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL@0..1"
+        rel="stylesheet"
+    />
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#9f4122",
+                        secondary: "#006973",
+                        tertiary: "#286b33",
+
+                        background: "#FFF9C4",
+                        surface: "#ffffff",
+
+                        "surface-container": "#f7ead7",
+                        "surface-container-high": "#f1dfc6",
+                        "surface-container-highest": "#e8d3b8",
+
+                        "on-surface": "#071e27",
+                        "on-surface-variant": "#56423c",
+
+                        "secondary-container": "#6debfd",
+                        "outline-variant": "#ddc0b8"
+                    },
+
+                    fontFamily: {
+                        body: ["Atkinson Hyperlegible Next", "sans-serif"]
+                    },
+
+                    borderRadius: {
+                        xl: "1rem",
+                        "2xl": "2rem"
+                    }
+                }
+            }
+        };
+    </script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Atkinson Hyperlegible Next", sans-serif;
+            background: #FFF9C4;
+            color: #071e27;
+        }
+
+        .hero-image {
+            box-shadow:
+                0 20px 45px rgba(86, 66, 60, 0.12),
+                0 4px 12px rgba(86, 66, 60, 0.08);
+        }
+
+        .feature-card {
+            transition:
+                transform 0.3s ease,
+                box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(86, 66, 60, 0.1);
+        }
+
+        .cta-button {
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- =====================================================
+         NAVBAR
+    ====================================================== -->
+
+    <nav class="fixed top-0 left-0 w-full z-50
+                bg-[#f7ead7]/90 backdrop-blur-md
+                shadow-sm border-b border-[#e8d3b8]">
+
+        <div class="max-w-[1200px] mx-auto
+                    h-20 px-6 lg:px-12
+                    flex items-center justify-between">
+
+            <!-- Logo -->
+            <div class="text-xl font-bold text-primary">
+                Social Steps
+            </div>
+
+            <!-- Navigation -->
+            <div class="hidden md:flex items-center gap-10">
+
+                <a
+                    href="#home"
+                    class="text-primary font-bold
+                           border-b-4 border-primary
+                           pb-1"
+                >
+                    Home
+                </a>
+
+                <a
+                    href="#about"
+                    class="text-on-surface-variant
+                           font-medium
+                           hover:text-primary
+                           transition-colors"
+                >
+                    About
+                </a>
+
+            </div>
+
+            <!-- Auth Buttons -->
+            <div class="flex items-center gap-5">
+
+                <a
+                    href="login.html"
+                    class="hidden md:block
+                           text-secondary font-semibold
+                           hover:text-primary
+                           transition-colors"
+                >
+                    Login
+                </a>
+
+                <a
+                    href="create_account.html"
+                    class="text-white
+                           px-7 py-3
+                           rounded-full
+                           font-semibold
+                           shadow-md
+                           hover:brightness-110
+                           transition-all
+                           active:scale-95"
+                    style="background:linear-gradient(135deg,#A7D79C,#81C784);"
+                >
+                    Sign Up
+                </a>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <main id="home" class="pt-28 pb-20">
+
+
+        <!-- =================================================
+             HERO SECTION
+        ================================================== -->
+
+        <section class="max-w-[1000px] mx-auto
+                        px-6 lg:px-12
+                        pb-20">
+
+            <div class="flex flex-col
+                        items-center
+                        text-center
+                        gap-10">
+
+                <!-- Hero Illustration -->
+
+                <div class="relative
+                            w-full
+                            max-w-[800px]">
+
+                    <div
+                        class="hero-image
+                               aspect-[16/9]
+                               rounded-2xl
+                               overflow-hidden
+                               bg-white
+                               p-0.5
+                               border border-[#e8d3b8]"
+                    >
+
+                        <img
+                            class="w-full h-full
+                                   object-cover
+                                   rounded-xl"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBApi4MZhTWVjD2W8ANy5qcwwwLdiVi2dIbPW_7Wi-Upwv2Y7QyO3IWlX08866BVUQ-zl0MfoeBc_5abPZSZKnFcUaIjQgZz5p-AWdbqOnZ-5msvzfX4yZHQhNXpCa4_WnXfZputCwqBhsKvN-carDLab7lJgZeifVvu8XwRYhzeW7w-fr7XWWGhzvcyu43P0GoeQAxpXF7i4gs7dXHgT7EX_12DR5VRkX8LnQB3IED6eJhHLpmHWvBLg"
+                            alt="A friendly robot and child learning together"
+                        />
+
+                    </div>
+
+                    <!-- Decorative circles -->
+
+                    <div
+                        class="absolute
+                               -top-8
+                               -right-8
+                               w-28 h-28
+                               bg-primary/10
+                               rounded-full
+                               blur-2xl
+                               -z-10"
+                    ></div>
+
+                    <div
+                        class="absolute
+                               -bottom-8
+                               -left-8
+                               w-32 h-32
+                               bg-tertiary/10
+                               rounded-full
+                               blur-2xl
+                               -z-10"
+                    ></div>
+
+                </div>
+
+
+                <!-- Hero Content -->
+
+                <div class="max-w-[720px]
+                            space-y-6">
+
+                    <h1
+                        class="text-4xl
+                               md:text-5xl
+                               font-bold
+                               leading-tight
+                               tracking-tight
+                               text-on-surface"
+                    >
+                        Every small step leads to big
+
+                        <span
+                            class="text-secondary
+                                   border-b-4
+                                   border-secondary/40"
+                        >
+                            connections.
+                        </span>
+                    </h1>
+
+
+                    <p
+                        class="text-lg
+                               md:text-xl
+                               leading-relaxed
+                               text-on-surface-variant"
+                    >
+                        Navigating social cues can be overwhelming.
+                        We guide children through interactive quizzes
+                        and gentle support, making social learning a
+                        predictable, calm journey.
+                    </p>
+
+
+                    <!-- CTA Buttons -->
+
+                    <div
+                        class="flex
+                               flex-col
+                               sm:flex-row
+                               gap-4
+                               justify-center
+                               pt-3"
+                    >
+
+                        <a
+                            href="create_account.html"
+                            class="cta-button
+                                   text-white
+                                   h-14
+                                   px-8
+                                   rounded-full
+                                   font-semibold
+                                   shadow-md
+                                   hover:shadow-lg
+                                   inline-flex items-center justify-center"
+                            style="background:linear-gradient(135deg,#A7D79C,#81C784);"
+                        >
+                            Begin Your Journey!
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             FEATURES SECTION
+        ================================================== -->
+
+        <section
+            id="about"
+            class="max-w-[1200px]
+                   mx-auto
+                   px-6 lg:px-12
+                   py-20
+                   border-t
+                   border-[#e8d3b8]"
+        >
+
+            <div
+                class="grid
+                       grid-cols-1
+                       md:grid-cols-3
+                       gap-12"
+            >
+
+
+                <!-- Feature 1 -->
+
+                <div class="feature-card
+                            flex flex-col
+                            gap-4
+                            p-5
+                            rounded-2xl">
+
+                    <div
+                        class="w-11 h-11
+                               rounded-lg
+                               bg-[#dff5ed]
+                               flex items-center
+                               justify-center
+                               text-tertiary"
+                    >
+                        <span
+                            class="material-symbols-outlined"
+                            style="font-variation-settings: 'FILL' 1;"
+                        >
+                            spa
+                        </span>
+                    </div>
+
+
+                    <h3
+                        class="text-xl
+                               font-bold
+                               text-on-surface"
+                    >
+                        Calm Learning
+                    </h3>
+
+
+                    <div
+                        class="h-1
+                               w-12
+                               bg-primary
+                               rounded-full"
+                    ></div>
+
+
+                    <p
+                        class="text-base
+                               leading-relaxed
+                               text-on-surface-variant"
+                    >
+                        We avoid jarring transitions and high-arousal
+                        colors to ensure focus stays on the social task
+                        at hand.
+                    </p>
+
+                </div>
+
+
+                <!-- Feature 2 -->
+
+                <div class="feature-card
+                            flex flex-col
+                            gap-4
+                            p-5
+                            rounded-2xl">
+
+                    <div
+                        class="w-11 h-11
+                               rounded-lg
+                               bg-[#dff5ed]
+                               flex items-center
+                               justify-center
+                               text-tertiary"
+                    >
+                        <span
+                            class="material-symbols-outlined"
+                            style="font-variation-settings: 'FILL' 1;"
+                        >
+                            extension
+                        </span>
+                    </div>
+
+
+                    <h3
+                        class="text-xl
+                               font-bold
+                               text-on-surface"
+                    >
+                        Step-by-Step
+                    </h3>
+
+
+                    <div
+                        class="h-1
+                               w-12
+                               bg-primary
+                               rounded-full"
+                    ></div>
+
+
+                    <p
+                        class="text-base
+                               leading-relaxed
+                               text-on-surface-variant"
+                    >
+                        Break down complex social scenarios into
+                        bite-sized, manageable choices with immediate,
+                        gentle feedback.
+                    </p>
+
+                </div>
+
+
+                <!-- Feature 3 -->
+
+                <div class="feature-card
+                            flex flex-col
+                            gap-4
+                            p-5
+                            rounded-2xl">
+
+                    <div
+                        class="w-11 h-11
+                               rounded-lg
+                               bg-[#dff5ed]
+                               flex items-center
+                               justify-center
+                               text-tertiary"
+                    >
+                        <span
+                            class="material-symbols-outlined"
+                            style="font-variation-settings: 'FILL' 1;"
+                        >
+                            trending_up
+                        </span>
+                    </div>
+
+
+                    <h3
+                        class="text-xl
+                               font-bold
+                               text-on-surface"
+                    >
+                        Visualizing Growth
+                    </h3>
+
+
+                    <div
+                        class="h-1
+                               w-12
+                               bg-primary
+                               rounded-full"
+                    ></div>
+
+
+                    <p
+                        class="text-base
+                               leading-relaxed
+                               text-on-surface-variant"
+                    >
+                        Celebrate achievement with tactile progress
+                        indicators and non-stimulating rewards designed
+                        for clarity.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             UNDERSTANDING THE JOURNEY
+        ================================================== -->
+
+        <section
+            class="max-w-[1200px]
+                   mx-auto
+                   px-6 lg:px-12
+                   py-10"
+        >
+
+            <div
+                class="bg-[#f8ecd9]
+                       rounded-[2rem]
+                       p-10
+                       md:p-16"
+            >
+
+                <div
+                    class="max-w-[800px]
+                           mx-auto
+                           text-center
+                           space-y-6"
+                >
+
+                    <h2
+                        class="text-3xl
+                               md:text-4xl
+                               font-bold
+                               text-on-surface"
+                    >
+                        Understanding the Journey
+                    </h2>
+
+
+                    <div
+                        class="h-1.5
+                               w-24
+                               bg-primary
+                               mx-auto
+                               rounded-full"
+                    ></div>
+
+
+                    <p
+                        class="text-lg
+                               md:text-xl
+                               leading-relaxed
+                               text-on-surface-variant"
+                    >
+                        For many autistic children, the social world is
+                        like a puzzle with missing pieces. Subtle shifts
+                        in tone or facial expressions can feel like a
+                        foreign language.
+
+                        <br><br>
+
+                        <strong>Social Steps</strong>
+                        provides a safe, digital playground where
+                        children can rehearse these moments without
+                        the pressure of real-time interactions.
+                        Through nurturing quizzes and clear visual
+                        anchors, we help bridge the gap between
+                        confusion and connection.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer
+        id="contact"
+        class="bg-[#f7ead7]
+               border-t
+               border-[#e8d3b8]
+               py-12
+               mt-10"
+    >
+
+        <div
+            class="max-w-[1200px]
+                   mx-auto
+                   px-6
+                   text-center
+                   flex flex-col
+                   items-center
+                   gap-6"
+        >
+
+            <!-- Logo -->
+
+            <div
+                class="text-xl
+                       font-bold
+                       text-primary"
+            >
+                Social Steps
+            </div>
+
+
+            <!-- Footer Links -->
+
+            <div
+                class="flex
+                       flex-wrap
+                       justify-center
+                       gap-8
+                       text-sm
+                       font-semibold
+                       text-on-surface-variant"
+            >
+
+                <a
+                    href="#"
+                    class="hover:text-primary
+                           transition-colors"
+                >
+                    Privacy Policy
+                </a>
+
+                <a
+                    href="#"
+                    class="hover:text-primary
+                           transition-colors"
+                >
+                    Terms of Service
+                </a>
+
+                <a
+                    href="#contact"
+                    class="hover:text-primary
+                           transition-colors"
+                >
+                    Contact Us
+                </a>
+
+            </div>
+
+
+            <!-- Copyright -->
+
+            <p
+                class="text-sm
+                       text-on-surface-variant
+                       opacity-60"
+            >
+                &copy; 2024 Social Steps. Designed for calm clarity.
+            </p>
+
+        </div>
+
+    </footer>
+
+
+    <!-- =====================================================
+         BUTTON INTERACTIONS
+    ====================================================== -->
+
+    <script>
+        document
+            .querySelectorAll("button")
+            .forEach((button) => {
+
+                button.addEventListener(
+                    "mouseenter",
+                    () => {
+                        button.style.transform =
+                            "translateY(-2px)";
+                    }
+                );
+
+                button.addEventListener(
+                    "mouseleave",
+                    () => {
+                        button.style.transform =
+                            "translateY(0)";
+                    }
+                );
+
+            });
+    </script>
+
+</body>
+</html>
