@@ -21,7 +21,7 @@ const questionBank = {
       { q: "Ignoring greeting is?", options: ["Rude", "Kind", "Helpful"], correct: 0 },
       { q: "Best response to greeting?", options: ["Return greeting", "Ignore", "Shout"], correct: 0 },
     ],
-  },
+  },    
   sharing: {
     easy: [
       { image: "https://images.pexels.com/photos/6966339/pexels-photo-6966339.jpeg?auto=compress&cs=tinysrgb&w=400", q: "Friend wants your toy?", options: ["Share it", "Hide it", "Refuse rudely"], correct: 0 },
